@@ -21,12 +21,22 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		343670AB2D0FEAC00063FCB8 /* home */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = home;
+			sourceTree = "<group>";
+		};
 		34598B782D0CACE60011C7A6 /* PakhisAthlinix */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				34598B882D0CACE70011C7A6 /* Exceptions for "PakhisAthlinix" folder in "PakhisAthlinix" target */,
 			);
 			path = PakhisAthlinix;
+			sourceTree = "<group>";
+		};
+		34598D212D0F3ADA0011C7A6 /* explore */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = explore;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -47,6 +57,8 @@
 			children = (
 				34598B782D0CACE60011C7A6 /* PakhisAthlinix */,
 				34598B772D0CACE60011C7A6 /* Products */,
+				343670AB2D0FEAC00063FCB8 /* home */,
+				34598D212D0F3ADA0011C7A6 /* explore */,
 			);
 			sourceTree = "<group>";
 		};
@@ -74,7 +86,9 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				343670AB2D0FEAC00063FCB8 /* home */,
 				34598B782D0CACE60011C7A6 /* PakhisAthlinix */,
+				34598D212D0F3ADA0011C7A6 /* explore */,
 			);
 			name = PakhisAthlinix;
 			packageProductDependencies = (

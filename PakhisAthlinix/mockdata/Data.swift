@@ -160,7 +160,7 @@ struct GameLog {
 struct Post {
     let postID: String
     let createdBy: String // User ID
-    var content: String
+    var content: String?
     var image1: String
     var image2: String
     var image3: String

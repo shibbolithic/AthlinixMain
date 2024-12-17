@@ -27,7 +27,7 @@ struct Team {
 let userStats = [
     AthleteMainStats(
         username: "akshita",
-        name: "Akshita Sharma",
+        name: "Akshita ",
         profilePicture: "Images21", // Example asset name
         ppg: 27.5,
         bpg: 7.2,

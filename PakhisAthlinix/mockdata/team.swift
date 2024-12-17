@@ -9,11 +9,11 @@ import Foundation
 
 // MARK:  Team Data
 var teams: [Teams] = [
-    Teams(teamID: "1", teamName: "Red Warriors", teamMotto: "Victory Awaits", teamLogo: "redWarriorsLogo.jpg", createdBy: "6", dateCreated: Date()),
-    Teams(teamID: "2", teamName: "Blue Sharks", teamMotto: "Unstoppable Force", teamLogo: "blueSharksLogo.jpg", createdBy: "7", dateCreated: Date()),
-    Teams(teamID: "3", teamName: "Golden Eagles", teamMotto: "Fly High", teamLogo: "goldenEaglesLogo.jpg", createdBy: "6", dateCreated: Date()),
-    Teams(teamID: "4", teamName: "Silver Lions", teamMotto: "Roar Loud", teamLogo: "silverLionsLogo.jpg", createdBy: "7", dateCreated: Date()),
-    Teams(teamID: "5", teamName: "Green Panthers", teamMotto: "Speed and Power", teamLogo: "greenPanthersLogo.jpg", createdBy: "6", dateCreated: Date())
+    Teams(teamID: "1", teamName: "Red Warriors", teamMotto: "Victory Awaits", teamLogo: "team1", createdBy: "6", dateCreated: Date()),
+    Teams(teamID: "2", teamName: "Blue Sharks", teamMotto: "Unstoppable Force", teamLogo: "team2", createdBy: "7", dateCreated: Date()),
+    Teams(teamID: "3", teamName: "Golden Eagles", teamMotto: "Fly High", teamLogo: "team3", createdBy: "6", dateCreated: Date()),
+    Teams(teamID: "4", teamName: "Silver Lions", teamMotto: "Roar Loud", teamLogo: "team4", createdBy: "7", dateCreated: Date()),
+    Teams(teamID: "5", teamName: "Green Panthers", teamMotto: "Speed and Power", teamLogo: "team5", createdBy: "6", dateCreated: Date())
 ]
 
 // MARK: Team Membership Data
