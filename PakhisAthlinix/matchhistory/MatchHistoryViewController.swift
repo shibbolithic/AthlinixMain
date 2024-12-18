@@ -12,9 +12,12 @@ class MatchHistoryViewController: UIViewController, UITableViewDataSource, UITab
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var searchBar: UISearchBar!
     
-    var matches: [Match] = []
-    var filteredMatches: [Match] = [] // Array for search results
-
+  
+    
+   // var games: [Game] = [] // Assuming you have a games array populated
+       var filteredGames: [Game] = []
+  //  var teams: [Teams] = [] // Array containing team data
+    
     func createDate(day: Int, month: Int, year: Int) -> Date {
         var dateComponents = DateComponents()
         dateComponents.day = day
@@ -28,51 +31,46 @@ class MatchHistoryViewController: UIViewController, UITableViewDataSource, UITab
             super.viewDidLoad()
             
             tableView.dataSource = self
-            searchBar.delegate = self // Set searchBar delegate
+            searchBar.delegate = self
+            
+            // Initialize your games array here
+            // games = loadGames()  // e.g., fetch games from a database or API
+        let gameStats = getGameStats(gameID: "game1")
+        print(gameStats.team1Name)  // "Red Warriors"
+        print(gameStats.team1Logo)  // "team1"
+        print(gameStats.team1Stats)  // ["2pt Field Goals": 22, "3pt Field Goals": 5, "Free Throws": 7]
+        print(gameStats.team2Name)  // "Blue Sharks"
+        print(gameStats.team2Logo)  // "team2"
+        print(gameStats.team2Stats)
 
-            // Initialize sample data
-            matches = [
-                Match(
-                    homeTeamLogo: UIImage(named: "team1")!,
-                    awayTeamLogo: UIImage(named: "team2")!,
-                    homeTeamName: "76ers",
-                    awayTeamName: "Raptors",
-                    fieldGoals: (34, 24),
-                    threePointers: (10, 7),
-                    freeThrows: (6, 3),
-                    date: createDate(day: 10, month: 9, year: 2024)
-                ),
-                Match(
-                    homeTeamLogo: UIImage(named: "team3")!,
-                    awayTeamLogo: UIImage(named: "team4")!,
-                    homeTeamName: "Lakers",
-                    awayTeamName: "Knicks",
-                    fieldGoals: (47, 47),
-                    threePointers: (10, 7),
-                    freeThrows: (6, 3),
-                    date: createDate(day: 18, month: 8, year: 2022)
-                )
-            ]
-        filteredMatches = matches
-
+            filteredGames = games
         }
+
     
     // MARK: - Search Functionality
-        func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-            if searchText.isEmpty {
-                filteredMatches = matches // Show all matches if search text is empty
-            } else {
-                filteredMatches = matches.filter { match in
-                    match.homeTeamName.lowercased().contains(searchText.lowercased()) ||
-                    match.awayTeamName.lowercased().contains(searchText.lowercased())
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if searchText.isEmpty {
+            filteredGames = games // Show all games if search text is empty
+        } else {
+            filteredGames = games.filter { game in
+                // Find home and away teams based on the team IDs
+                guard let homeTeam = teams.first(where: { $0.teamID == game.team1ID }),
+                      let awayTeam = teams.first(where: { $0.teamID == game.team2ID }) else {
+                    return false // If no team found, exclude this game from the filter
                 }
+                
+                // Compare search text with team names
+                return homeTeam.teamName.lowercased().contains(searchText.lowercased()) ||
+                       awayTeam.teamName.lowercased().contains(searchText.lowercased())
             }
-            tableView.reloadData() // Refresh table view with the filtered data
         }
+        tableView.reloadData() // Refresh table view with the filtered data
+    }
+
         
         func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
             searchBar.text = ""
-            filteredMatches = matches // Reset to show all matches
+            filteredGames = games // Reset to show all games
             tableView.reloadData()
             searchBar.resignFirstResponder() // Dismiss the keyboard
         }
@@ -80,18 +78,18 @@ class MatchHistoryViewController: UIViewController, UITableViewDataSource, UITab
         // MARK: - UITableViewDataSource
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-            //return matches.count
-        return filteredMatches.count
-
+            return filteredGames.count
         }
-        
+
         func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
             let cell = tableView.dequeueReusableCell(withIdentifier: "MatchTableViewCell", for: indexPath) as! MatchTableViewCell
-            let match = filteredMatches[indexPath.row]
-//            let match = matches[indexPath.row]
+            let game = filteredGames[indexPath.row]
             
-            // Configure cell with match data
-            cell.configure(with: match)
+            // Call getGameStats with the gameID
+            let gameStats = getGameStats(gameID: game.gameID)
+            
+            // Pass the data from getGameStats to the cell
+            cell.configure(with: gameStats)
             
             return cell
         }
