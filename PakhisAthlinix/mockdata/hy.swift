@@ -254,46 +254,46 @@ import UIKit
 //    }
 //}
 //
-struct Match {
-    let homeTeamLogo: UIImage
-    let awayTeamLogo: UIImage
-    let homeTeamName: String
-    let awayTeamName: String
-    let fieldGoals: (home: Int, away: Int)
-    let threePointers: (home: Int, away: Int)
-    let freeThrows: (home: Int, away: Int)
-    let date: Date
-}
-func createDate(day: Int, month: Int, year: Int) -> Date {
-    var dateComponents = DateComponents()
-    dateComponents.day = day
-    dateComponents.month = month
-    dateComponents.year = year
-    let calendar = Calendar.current
-    return calendar.date(from: dateComponents) ?? Date()
-}
-var matches: [Match] = [
-    Match(
-        homeTeamLogo: UIImage(named: "team1")!,
-        awayTeamLogo: UIImage(named: "team2")!,
-        homeTeamName: "76ers",
-        awayTeamName: "Raptors",
-        fieldGoals: (34, 24),
-        threePointers: (10, 7),
-        freeThrows: (6, 3),
-        date: createDate(day: 10, month: 9, year: 2024)
-    ),
-    Match(
-        homeTeamLogo: UIImage(named: "team3")!,
-        awayTeamLogo: UIImage(named: "team4")!,
-        homeTeamName: "Lakers",
-        awayTeamName: "Knicks",
-        fieldGoals: (47, 47),
-        threePointers: (10, 7),
-        freeThrows: (6, 3),
-        date: createDate(day: 18, month: 8, year: 2022)
-    )
-]
+//struct Match {
+//    let homeTeamLogo: UIImage
+//    let awayTeamLogo: UIImage
+//    let homeTeamName: String
+//    let awayTeamName: String
+//    let fieldGoals: (home: Int, away: Int)
+//    let threePointers: (home: Int, away: Int)
+//    let freeThrows: (home: Int, away: Int)
+//    let date: Date
+//}
+//func createDate(day: Int, month: Int, year: Int) -> Date {
+//    var dateComponents = DateComponents()
+//    dateComponents.day = day
+//    dateComponents.month = month
+//    dateComponents.year = year
+//    let calendar = Calendar.current
+//    return calendar.date(from: dateComponents) ?? Date()
+//}
+//var matches: [Match] = [
+//    Match(
+//        homeTeamLogo: UIImage(named: "team1")!,
+//        awayTeamLogo: UIImage(named: "team2")!,
+//        homeTeamName: "76ers",
+//        awayTeamName: "Raptors",
+//        fieldGoals: (34, 24),
+//        threePointers: (10, 7),
+//        freeThrows: (6, 3),
+//        date: createDate(day: 10, month: 9, year: 2024)
+//    ),
+//    Match(
+//        homeTeamLogo: UIImage(named: "team3")!,
+//        awayTeamLogo: UIImage(named: "team4")!,
+//        homeTeamName: "Lakers",
+//        awayTeamName: "Knicks",
+//        fieldGoals: (47, 47),
+//        threePointers: (10, 7),
+//        freeThrows: (6, 3),
+//        date: createDate(day: 18, month: 8, year: 2022)
+//    )
+//]
 
 //// MARK: - Team Membership
 //struct TeamMembership {

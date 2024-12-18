@@ -1,3 +1,11 @@
+//
+//  func.swift
+//  PakhisAthlinix
+//
+//  Created by admin65 on 17/12/24.
+//
+
+
 func getGameStats(gameID: String) -> (team1Name: String, team1Logo: String, team2Name: String, team2Logo: String, team1Stats: [String: Int], team2Stats: [String: Int]) {
     // Find the game by ID
     guard let game = games.first(where: { $0.gameID == gameID }) else {

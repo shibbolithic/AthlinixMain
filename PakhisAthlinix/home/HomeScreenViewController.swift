@@ -5,6 +5,14 @@
 //  Created by admin65 on 14/12/24.
 //
 import UIKit
+struct Team {
+    let name: String
+    let image: UIImage
+    let twoPointFieldGoals: Int
+    let threePointFieldGoals: Int
+    let freeThrows: Int
+}
+
 
 class HomeScreenViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     @IBOutlet weak var headerView: UIView!
@@ -52,7 +60,6 @@ class HomeScreenViewController: UIViewController, UICollectionViewDelegate, UICo
     // MARK: viewdidload
     override func viewDidLoad() {
         super.viewDidLoad()
-        let loggedInUserID = "2"
         
         headerView.layer.cornerRadius = 16
         // Do any additional setup after loading the view.
@@ -123,6 +130,7 @@ class HomeScreenViewController: UIViewController, UICollectionViewDelegate, UICo
         //setupMatchesPlayedvsPointsScoredSection()
         //setupMatchesPlayedvsPointsScoredSection()
     }
+    
     
     func configurePinnedMatch(team1: Team, team2: Team) {
         // Set Team 1 details
@@ -300,7 +308,7 @@ class HomeScreenViewController: UIViewController, UICollectionViewDelegate, UICo
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "AthletesCell", for: indexPath) as! athletesCollectionViewCell
             let user = users[indexPath.row]  // Fetch the user at the given index
             
-            // Configure the cell with user data
+         
             cell.configure(with: user)  // Assuming your cell has a configure method that accepts a `User`
             
             return cell
@@ -384,75 +392,6 @@ class HomeScreenViewController: UIViewController, UICollectionViewDelegate, UICo
         // Add the chart view to the teamgraphview
         teamgraphview.addSubview(chartView)
     }
-
-//    func setupMatchesPlayedVsPointsScoredGraph() {
-//        guard let athlete = userStats.first else { return }
-//        
-//        matchesPlayedvsPointsScoredBarGraphView.clipsToBounds = true // Ensure content stays within the view
-//        let groupSpacing: CGFloat = 40
-//        let barWidth: CGFloat = 30
-//        let barSpacing: CGFloat = 10
-//        let graphHeight: CGFloat = matchesPlayedvsPointsScoredBarGraphView.bounds.height - 20 // Padding for labels
-//        let maxPoints: CGFloat = 500 // Maximum points for scaling
-//        let graphWidth = matchesPlayedvsPointsScoredBarGraphView.bounds.width
-//        
-//        // Data for matches vs points scored
-//        let matchesData = [athlete.tournamentsPlayed, athlete.standAloneMatchesPlayed]
-//        let pointsData = [athlete.totalTournamentPoints, athlete.totalStandAlonePoints]
-//        let groupLabels = ["Tournaments", "Stand-Alone"]
-//        
-//        // Calculate starting x offset for centering
-//        let totalGroupWidth = CGFloat(groupLabels.count) * (2 * barWidth + barSpacing + groupSpacing) - groupSpacing
-//        let xOffset = (graphWidth - totalGroupWidth) / 2
-//        
-//        // Add Grid Lines
-//        let numberOfGridLines = 5
-//        for i in 0...numberOfGridLines {
-//            let yPosition = graphHeight - (graphHeight / CGFloat(numberOfGridLines) * CGFloat(i))
-//            
-//            let gridLine = UIView(frame: CGRect(x: 0, y: yPosition, width: matchesPlayedvsPointsScoredBarGraphView.bounds.width, height: 1))
-//            gridLine.backgroundColor = .lightGray.withAlphaComponent(0.3)
-//            matchesPlayedvsPointsScoredBarGraphView.addSubview(gridLine)
-//            
-//            // Add Labels for Grid Values
-//            let valueLabel = UILabel(frame: CGRect(x: 0, y: yPosition - 8, width: 30, height: 15))
-//            valueLabel.text = "\(Int(maxPoints / CGFloat(numberOfGridLines) * CGFloat(i)))"
-//            valueLabel.font = UIFont.systemFont(ofSize: 10)
-//            valueLabel.textAlignment = .right
-//            valueLabel.textColor = .gray
-//            matchesPlayedvsPointsScoredBarGraphView.addSubview(valueLabel)
-//        }
-//        
-//        // Add Bars
-//        for (groupIndex, label) in groupLabels.enumerated() {
-//            let groupStartX = xOffset + CGFloat(groupIndex) * (2 * barWidth + barSpacing + groupSpacing)
-//            
-//            // Matches Bar
-//            let matchesHeight = graphHeight * CGFloat(matchesData[groupIndex]) / maxPoints
-//            let matchesBarX = groupStartX
-//            let matchesBarView = UIView(frame: CGRect(x: matchesBarX, y: graphHeight - matchesHeight, width: barWidth, height: matchesHeight))
-//            matchesBarView.backgroundColor = .systemBlue
-//            matchesBarView.layer.cornerRadius = 4
-//            matchesPlayedvsPointsScoredBarGraphView.addSubview(matchesBarView)
-//            
-//            // Points Bar
-//            let pointsHeight = graphHeight * CGFloat(pointsData[groupIndex]) / maxPoints
-//            let pointsBarX = groupStartX + barWidth + barSpacing
-//            let pointsBarView = UIView(frame: CGRect(x: pointsBarX, y: graphHeight - pointsHeight, width: barWidth, height: pointsHeight))
-//            pointsBarView.backgroundColor = .systemOrange
-//            pointsBarView.layer.cornerRadius = 4
-//            matchesPlayedvsPointsScoredBarGraphView.addSubview(pointsBarView)
-//            
-//            // Add Group Label
-//            let groupLabel = UILabel(frame: CGRect(x: groupStartX, y: graphHeight + 5, width: 2 * barWidth + barSpacing, height: 20))
-//            groupLabel.text = label
-//            groupLabel.font = UIFont.systemFont(ofSize: 12)
-//            groupLabel.textAlignment = .center
-//            groupLabel.textColor = .gray
-//            matchesPlayedvsPointsScoredBarGraphView.addSubview(groupLabel)
-//        }
-//    }
-    
     
     @IBAction func navigateToHierarchy(_ sender: UIButton) {
         performSegue(withIdentifier: "goToNavigation", sender: nil)
@@ -503,8 +442,19 @@ class HomeScreenViewController: UIViewController, UICollectionViewDelegate, UICo
     // Define methods for each action
     func createPost() {
         // Code for creating a post
-        print("Create Post tapped")
-    }
+        let createPostVC = CreatePostViewController()
+            
+            // Push CreatePostViewController onto the navigation stack
+            navigationController?.pushViewController(createPostVC, animated: true)
+        
+        
+        }
+
+        // Add this helper function if needed to refresh the home feed
+        private func refreshHomeFeed() {
+            print("Home feed refreshed with the new post")
+            // Add logic to update the home feed with the new post
+        }
 
     func createTeam() {
         // Code for creating a team

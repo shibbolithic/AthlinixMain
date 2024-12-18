@@ -1,6 +1,6 @@
+// Global posts array
 import UIKit
 
-// MARK: - CreatePostViewController
 class CreatePostViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
     // MARK: - UI Components
@@ -12,9 +12,9 @@ class CreatePostViewController: UIViewController, UIImagePickerControllerDelegat
     private let separatorView = UIView()
     
     // MARK: - Properties
-    var postCompletionHandler: ((Post) -> Void)?
     private var selectedImages: [UIImage] = []
-
+    private let loggedInUserID = "currentUserID" // Replace with the actual logged-in user's ID
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
@@ -134,9 +134,9 @@ class CreatePostViewController: UIViewController, UIImagePickerControllerDelegat
             return
         }
         
-        let post = Post(
+        let newPost = Post(
             postID: UUID().uuidString,
-            createdBy: "user123", // Replace with logged-in user's ID
+            createdBy: loggedInUserID,
             content: nil,
             image1: selectedImages.indices.contains(0) ? selectedImages[0].description : "",
             image2: selectedImages.indices.contains(1) ? selectedImages[1].description : "",
@@ -146,7 +146,10 @@ class CreatePostViewController: UIViewController, UIImagePickerControllerDelegat
             likes: 0
         )
         
-        postCompletionHandler?(post)
+        // Save the new post to the global array
+        posts.append(newPost)
+        
+        // Navigate back
         navigationController?.popViewController(animated: true)
     }
     

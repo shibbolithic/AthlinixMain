@@ -93,6 +93,11 @@ class MatchHistoryViewController: UIViewController, UITableViewDataSource, UITab
             
             return cell
         }
+    
+    @IBAction func celltapped(_ sender: UIButton) {
+        performSegue(withIdentifier: "gotostats" , sender: nil)
+    }
+    
     }
 
 
