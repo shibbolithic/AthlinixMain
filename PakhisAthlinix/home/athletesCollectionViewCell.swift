@@ -24,8 +24,7 @@ class athletesCollectionViewCell: UICollectionViewCell {
                athleteProfileImageView.image = UIImage(named: "placeholder")  // Fallback image
            }
            
-           // Optionally, set stats or other information
-          // userStatsLabel.text = "Some stat here"  // Modify according to what you want to show
+        
        }
 
 }

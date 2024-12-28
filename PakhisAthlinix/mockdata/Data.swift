@@ -8,13 +8,13 @@
 import Foundation
 
 // Athlinix Data Model Implementation in Swift
-enum UserRole {
+enum UserRole : Decodable {
     case athlete
     case coach
 }
 
 // MARK: - User
-class User {
+class User{
     let userID: String
     var username: String
     var name: String
@@ -43,7 +43,7 @@ class User {
 }
 
 // MARK: - Athlete Profile
-class AthleteProfile {
+class AthleteProfile: Decodable {
     let athleteID: String // User ID
     var height: Double
     var weight: Double
@@ -81,7 +81,7 @@ class CoachProfile {
 }
 
 // MARK: - Team
-class Teams {
+class Teams: Decodable {
     let teamID: String
     var teamName: String
     var teamMotto: String
@@ -98,6 +98,7 @@ class Teams {
         self.dateCreated = dateCreated
     }
 }
+
 
 // MARK: - Team Membership
 struct TeamMembership {

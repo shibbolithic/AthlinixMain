@@ -5,14 +5,6 @@
 //  Created by admin65 on 14/12/24.
 //
 import UIKit
-struct Team {
-    let name: String
-    let image: UIImage
-    let twoPointFieldGoals: Int
-    let threePointFieldGoals: Int
-    let freeThrows: Int
-}
-
 
 class HomeScreenViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     @IBOutlet weak var headerView: UIView!
@@ -52,7 +44,7 @@ class HomeScreenViewController: UIViewController, UICollectionViewDelegate, UICo
     
     @IBOutlet weak var teamgraphview: UIView!
 
-    let loggedInUserID = "2"
+    //let loggedInUserID = "2"
     
     //@IBOutlet weak var teamPerformanceBarChartView: TeamPerformanceBarGamePlayChartView!
     
@@ -75,24 +67,7 @@ class HomeScreenViewController: UIViewController, UICollectionViewDelegate, UICo
             view?.layer.cornerRadius = 8 // Optional: Rounded corners
             view?.clipsToBounds = true
         }
-        
-        
-        // Example Teams MARK: previous implementation BEST MATCH
-        //                 let team1 = Team(name: "LA Lakers",
-        //                                  image: UIImage(named: "team4")!,
-        //                                  twoPointFieldGoals: 47,
-        //                                  threePointFieldGoals: 10,
-        //                                  freeThrows: 6)
-        //
-        //                 let team2 = Team(name: "BFI",
-        //                                  image: UIImage(named: "team5")!,
-        //                                  twoPointFieldGoals: 47,
-        //                                  threePointFieldGoals: 7,
-        //                                  freeThrows: 3)
-        //
-        //                 // Configure UI
-        //                 configurePinnedMatch(team1: team1, team2: team2)
-        
+       
         // MARK: NEW
         // Fetch the best match data and update UI
         if let bestMatch = fetchBestMatch(forPlayerID: loggedInUserID) {
@@ -132,25 +107,25 @@ class HomeScreenViewController: UIViewController, UICollectionViewDelegate, UICo
     }
     
     
-    func configurePinnedMatch(team1: Team, team2: Team) {
-        // Set Team 1 details
-        team1ImageView.image = team1.image
-        team1Name.text = team1.name
-        team12ptfgs.text = "\(team1.twoPointFieldGoals)"
-        team13ptfgs.text = "\(team1.threePointFieldGoals)"
-        team1FreeThrows.text = "\(team1.freeThrows)"
-        
-        // Set Team 2 details
-        team2ImageView.image = team2.image
-        team2Name.text = team2.name
-        team22ptfgs.text = "\(team2.twoPointFieldGoals)"
-        team23ptfgs.text = "\(team2.threePointFieldGoals)"
-        team2FreeThrows.text = "\(team2.freeThrows)"
-    }
+//    func configurePinnedMatch(team1: Team, team2: Team) {
+//        // Set Team 1 details
+//        team1ImageView.image = team1.image
+//        team1Name.text = team1.name
+//        team12ptfgs.text = "\(team1.twoPointFieldGoals)"
+//        team13ptfgs.text = "\(team1.threePointFieldGoals)"
+//        team1FreeThrows.text = "\(team1.freeThrows)"
+//        
+//        // Set Team 2 details
+//        team2ImageView.image = team2.image
+//        team2Name.text = team2.name
+//        team22ptfgs.text = "\(team2.twoPointFieldGoals)"
+//        team23ptfgs.text = "\(team2.threePointFieldGoals)"
+//        team2FreeThrows.text = "\(team2.freeThrows)"
+//    }
     
     // MARK: - Setup Header
     private func setupHeader() {
-        guard let athlete = users.first(where: { $0.userID == "2" }) else {
+        guard let athlete = users.first(where: { $0.userID == loggedInUserID }) else {
             print("No user stats available.")
             return
         }

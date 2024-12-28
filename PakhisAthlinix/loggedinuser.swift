@@ -6,3 +6,5 @@
 //
 
 import Foundation
+
+let loggedInUserID = "1"

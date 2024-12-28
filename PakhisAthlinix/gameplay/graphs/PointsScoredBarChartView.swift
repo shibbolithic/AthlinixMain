@@ -7,13 +7,14 @@
 
 import UIKit
 
+
 class PointsScoredBarChartView: UIView {
     
     // Define years dynamically or hardcode specific years
     let years = ["2024", "2023", "2022", "2021", "2020"]
     var values: [CGFloat] = []
 
-    var loggedInUserID: String = "1" // Example logged-in user ID
+//    var loggedInUserID: String = "1" // Example logged-in user ID
     
     override init(frame: CGRect) {
         super.init(frame: frame)
