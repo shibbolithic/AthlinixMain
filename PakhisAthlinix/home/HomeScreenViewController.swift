@@ -106,7 +106,6 @@ class HomeScreenViewController: UIViewController, UICollectionViewDelegate, UICo
         //setupMatchesPlayedvsPointsScoredSection()
     }
     
-    
 //    func configurePinnedMatch(team1: Team, team2: Team) {
 //        // Set Team 1 details
 //        team1ImageView.image = team1.image
@@ -421,7 +420,6 @@ class HomeScreenViewController: UIViewController, UICollectionViewDelegate, UICo
             
             // Push CreatePostViewController onto the navigation stack
             navigationController?.pushViewController(createPostVC, animated: true)
-        
         
         }
 

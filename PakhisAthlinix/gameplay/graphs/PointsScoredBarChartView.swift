@@ -10,7 +10,7 @@ import UIKit
 
 class PointsScoredBarChartView: UIView {
     
-    // Define years dynamically or hardcode specific years
+    //MARK: Define years dynamically or hardcode specific years
     let years = ["2024", "2023", "2022", "2021", "2020"]
     var values: [CGFloat] = []
 
@@ -25,7 +25,7 @@ class PointsScoredBarChartView: UIView {
         super.init(coder: coder)
         calculateValuesForLoggedInUser()
     }
-    
+    //MARK: fetch data
     private func calculateValuesForLoggedInUser() {
         // Initialize values with zeros for each year
         var yearScores: [String: CGFloat] = years.reduce(into: [:]) { $0[$1] = 0 }
@@ -44,7 +44,7 @@ class PointsScoredBarChartView: UIView {
         // Map year scores to the values array
         values = years.map { yearScores[$0] ?? 0 }
     }
-    
+    //MARK: draw func
     override func draw(_ rect: CGRect) {
         guard let context = UIGraphicsGetCurrentContext() else { return }
         
@@ -117,7 +117,7 @@ class PointsScoredBarChartView: UIView {
             self.addSubview(yearLabel)
         }
         
-        // Draw connecting line
+        //MARK:  Draw connecting line
         context.setStrokeColor(lineColor.cgColor)
         context.setLineWidth(2)
         context.setLineJoin(.round)

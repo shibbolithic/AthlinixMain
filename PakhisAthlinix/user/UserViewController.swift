@@ -8,7 +8,6 @@
 import UIKit
 import Storage
 
-let sessionuser: UUID = UUID(uuidString: "20e33a9c-9e8e-4113-b56a-2a04b96f6b53")!
 
 class UserViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     //var loggedinuser = "2"
@@ -56,8 +55,12 @@ class UserViewController: UIViewController, UITableViewDelegate, UITableViewData
     var teams11:[TeamTable] = []
     var posts11: [PostsTable] = []
     
+    //MARK: Editing
+    var options: [String] = []
+    var selectedOption: String?
+    var onSave: ((String) -> Void)?
     
-    
+    //MARK: VIEWDIDLOAD
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -79,6 +82,7 @@ class UserViewController: UIViewController, UITableViewDelegate, UITableViewData
                 print("Error fetching best match: \(error)")
             }
         }
+        
         //fetchBestMatchSupabase(forPlayerID: sessionuser)
         // Set delegates and data sources
         teamCollectionView.delegate = self
@@ -87,6 +91,8 @@ class UserViewController: UIViewController, UITableViewDelegate, UITableViewData
         tableView.dataSource = self
     }
     
+    //MARK: Editing Features
+
     // MARK: - Fetch Data from Supabase
     func setupPrimaryDataSupabase(forUserID userID: UUID) async {
         do {
@@ -107,19 +113,7 @@ class UserViewController: UIViewController, UITableViewDelegate, UITableViewData
             print("Error setting up primary data: \(error)")
         }
     }
-    /// MARK: - Fetch and Assign Primary Data
-    //    func setupPrimaryData(forUserID userID: String) {
-    //        // Find user with matching userID
-    //        if let matchedUser = users.first(where: { $0.userID == userID }) {
-    //            user = matchedUser
-    //        }
-    //
-    //        // Find athlete profile with matching athleteID
-    //        if let matchedAthleteProfile = athleteProfiles.first(where: { $0.athleteID == userID }) {
-    //            athleteProfile = matchedAthleteProfile
-    //        }
-    //    }
-    
+ 
     // MARK: - Calculate Games Played Supabase
     func calculateGamesPlayedsupabase(forUserID userID: UUID) async -> Int {
         do {
@@ -137,16 +131,7 @@ class UserViewController: UIViewController, UITableViewDelegate, UITableViewData
             return 0
         }
     }
-    
-    /// MARK: - Calculate Games Played
-    //    func calculateGamesPlayed(forUserID userID: String) -> Int {
-    //        // Extract unique game IDs
-    //        let matchesPlayed = Set(gameLogs.filter { $0.playerID == loggedInUserID }.map { $0.gameID }).count
-    //        // Return the count of unique games
-    //        return matchesPlayed
-    //    }
-    
-    
+
     // MARK: - Setup Profile Details Supabase
     func setupProfileDetailsSupabase() async {
         guard let user11 = user11 else {
@@ -184,29 +169,6 @@ class UserViewController: UIViewController, UITableViewDelegate, UITableViewData
         }
     }
     
-    // MARK: - Fetch Best Match Supabase
-    func fetchBestMatch(forPlayerID playerID: String) -> Game? {
-        // Filter games where the player participated
-        let playerGameLogs = gameLogs.filter { $0.playerID == playerID }
-        let playerGameIDs = Set(playerGameLogs.map { $0.gameID })
-        let playerGames = games.filter { playerGameIDs.contains($0.gameID) }
-        
-        // Select the best match (e.g., highest total points scored by the player's team)
-        var bestGame: Game?
-        var maxPoints = 0
-        
-        for game in playerGames {
-            let teamLogs = playerGameLogs.filter { $0.gameID == game.gameID }
-            let teamPoints = teamLogs.reduce(0) { $0 + $1.totalPoints }
-            
-            if teamPoints > maxPoints {
-                maxPoints = teamPoints
-                bestGame = game
-            }
-        }
-        
-        return bestGame
-    }
     // MARK: NEW FETCH MATCHES
     func fetchBestMatchSupabase(forPlayerID playerID: UUID) async throws -> GameTable? {
         // Step 1: Fetch GameLogs for the player
@@ -264,7 +226,7 @@ class UserViewController: UIViewController, UITableViewDelegate, UITableViewData
                 maxPoints = teamPoints
                 print(maxPoints)
                 bestGame = game
-                print(bestGame)
+                //print(bestGame!)
             }
         }
         return bestGame
@@ -390,6 +352,7 @@ class UserViewController: UIViewController, UITableViewDelegate, UITableViewData
         }
     }
     
+    //MARK: Fetch memberships for the current user
     func fetchTeamsForUserSupabase(userID: UUID?) {
         guard let userID = userID else {
             print("User ID is nil")
@@ -398,7 +361,6 @@ class UserViewController: UIViewController, UITableViewDelegate, UITableViewData
         
         Task {
             do {
-                // Fetch memberships for the current user
                 let membershipsResponse = try await supabase
                     .from("teamMembership")
                     .select("*")
@@ -432,12 +394,7 @@ class UserViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     // MARK: - Fetch Posts
-//    func fetchPosts() {
-//        
-//        posts1 = posts.filter { $0.createdBy == loggedInUserID }
-//        tableView.reloadData()
-//    }
-    
+
     func fetchPosts() async {
         do {
             // Fetch posts created by the logged-in user
@@ -454,11 +411,8 @@ class UserViewController: UIViewController, UITableViewDelegate, UITableViewData
         }
     }
     
-    
-    
-    
     // MARK: FEED
-    
+
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return posts11.count
     }
@@ -470,8 +424,6 @@ class UserViewController: UIViewController, UITableViewDelegate, UITableViewData
         
         // Fetch the post from the filtered posts array
         let poster = posts11[indexPath.row]
-        
-        // Configure cell with the post data
         // Configure cell asynchronously to fetch data from Supabase
         Task {
             do {
@@ -545,4 +497,5 @@ extension UserViewController: UICollectionViewDelegate, UICollectionViewDataSour
         return cell
     }
 }
+
 

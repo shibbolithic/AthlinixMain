@@ -1,11 +1,3 @@
-//
-//  GoalsPieChartView.swift
-//  GamePlay
-//
-//  Created by admin65 on 19/11/24.
-//
-
-
 import UIKit
 
 class GoalsPieChartView: UIView {
@@ -21,18 +13,21 @@ class GoalsPieChartView: UIView {
     private var arcs: [CGRect] = []
     private var radiusList: [CGFloat] = []
     private var percentageLabel: UILabel!
-    var gameLogs: [GameLog] = [] // Replace this with your pre-defined `gameLogs`
 
     override init(frame: CGRect) {
         super.init(frame: frame)
         setup()
-        loadData()
+        Task {
+            await loadDataFromSupabase()
+        }
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         setup()
-        loadData()
+        Task {
+            await loadDataFromSupabase()
+        }
     }
     
     private func setup() {
@@ -49,39 +44,55 @@ class GoalsPieChartView: UIView {
         addGestureRecognizer(tapGesture)
     }
     
-    func loadData() {
-        guard !gameLogs.isEmpty else {
-            print("No game logs available")
-            return
+    private func loadDataFromSupabase() async {
+        do {
+            // Fetch game logs for the specific team
+           /* let teamID = UUID()*/ // Replace with actual teamID
+            let gameLogsResponse = try await supabase
+                .from("GameLog")
+                .select("*")
+                .eq("playerID", value: sessionuser.uuidString)
+                .execute()
+            
+            let gameLogs = try JSONDecoder().decode([GameLogtable].self, from: gameLogsResponse.data)
+            
+            // Aggregate the data for calculating percentages
+            let totalFreeThrowsMade = gameLogs.reduce(0) { $0 + $1.freeThrows }
+            let totalFreeThrowsMissed = gameLogs.reduce(0) { $0 + $1.missed2Points }
+            let totalTwoPointsMade = gameLogs.reduce(0) { $0 + $1.points2 }
+            let totalTwoPointsMissed = gameLogs.reduce(0) { $0 + $1.missed2Points }
+            let totalThreePointsMade = gameLogs.reduce(0) { $0 + $1.points3 }
+            let totalThreePointsMissed = gameLogs.reduce(0) { $0 + $1.missed3Points }
+            
+            // Calculate percentages
+            let totalFreeThrows = CGFloat(totalFreeThrowsMade + totalFreeThrowsMissed)
+            let totalTwoPoints = CGFloat(totalTwoPointsMade + totalTwoPointsMissed)
+            let totalThreePoints = CGFloat(totalThreePointsMade + totalThreePointsMissed)
+            
+            percentages = [
+                totalFreeThrows == 0 ? 0 : CGFloat(totalFreeThrowsMade) / totalFreeThrows,
+                totalTwoPoints == 0 ? 0 : CGFloat(totalTwoPointsMade) / totalTwoPoints,
+                totalThreePoints == 0 ? 0 : CGFloat(totalThreePointsMade) / totalThreePoints
+            ]
+            print(percentages)
+            
+            // Redraw the pie chart with the new data
+            DispatchQueue.main.async {
+                self.setNeedsDisplay()
+            }
+        } catch {
+            print("Error fetching data from Supabase: \(error)")
         }
-
-        // Aggregate the data for calculating percentages
-        let totalFreeThrowsMade = gameLogs.reduce(0) { $0 + $1.freeThrows }
-        let totalFreeThrowsMissed = gameLogs.reduce(0) { $0 + $1.missed2Points }
-        let totalTwoPointsMade = gameLogs.reduce(0) { $0 + $1.points2 }
-        let totalTwoPointsMissed = gameLogs.reduce(0) { $0 + $1.missed2Points }
-        let totalThreePointsMade = gameLogs.reduce(0) { $0 + $1.points3 }
-        let totalThreePointsMissed = gameLogs.reduce(0) { $0 + $1.missed3Points }
-        
-        // Calculate percentages
-        let totalFreeThrows = CGFloat(totalFreeThrowsMade + totalFreeThrowsMissed)
-        let totalTwoPoints = CGFloat(totalTwoPointsMade + totalTwoPointsMissed)
-        let totalThreePoints = CGFloat(totalThreePointsMade + totalThreePointsMissed)
-        
-        percentages = [
-            totalFreeThrows == 0 ? 0 : CGFloat(totalFreeThrowsMade) / totalFreeThrows,
-            totalTwoPoints == 0 ? 0 : CGFloat(totalTwoPointsMade) / totalTwoPoints,
-            totalThreePoints == 0 ? 0 : CGFloat(totalThreePointsMade) / totalThreePoints
-        ]
-        
-        // Redraw the pie chart with the new data
-        setNeedsDisplay()
     }
     
     override func draw(_ rect: CGRect) {
         super.draw(rect)
         guard percentages.count == colors.count, percentages.count == ringWidths.count else {
             print("Mismatch in the number of percentages, colors, or ring widths!")
+            print(percentages)
+            print(percentages.count)
+            print(colors.count)
+            print(ringWidths.count)
             return
         }
         
@@ -138,6 +149,7 @@ class GoalsPieChartView: UIView {
             // Check if the touch is within the radius range
             if distance >= radius - ringWidths[index] && distance <= radius {
                 showPercentage(percentages[index])
+                
                 return
             }
         }

@@ -34,6 +34,12 @@ enum positions: String, Codable, CaseIterable {
        case center = "Center"
 }
 
+struct AthleteProfileUpdate: Encodable {
+    var position: String?
+    var height: Int?
+    var weight: Int?
+}
+
 struct AthleteProfileTable : Codable, Equatable{
     let athleteID : UUID
     let height : Float
@@ -82,6 +88,30 @@ struct GameLogtable: Codable, Equatable {
     }
 }
 
+struct userphotos: Codable, Equatable{
+    let userID: UUID
+    let profilePicture: String
+}
+
+struct GameLogtable101: Codable, Equatable {
+    //let logID: UUID
+    let gameID: UUID
+    let teamID: UUID
+    let playerID: UUID
+    var points2: Int
+    var points3: Int
+    var freeThrows: Int
+    var rebounds: Int
+    var assists: Int
+    var steals: Int
+    var fouls: Int
+    var missed2Points: Int
+    var missed3Points: Int
+    var totalPoints: Int {
+        return points2 * 2 + points3 * 3
+    }
+}
+
 struct GameTable: Codable, Equatable{
     let gameID: UUID
     var team1ID: UUID
@@ -102,6 +132,9 @@ struct PostsTable:Codable, Equatable{
     var linkedGameID: UUID? // Nullable
     var likes: Int
 }
+
+let heightRange = Array(140...220) // Height in cm
+let weightRange = Array(40...150) // Weight in kg
 
 import Foundation
 

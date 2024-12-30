@@ -65,7 +65,7 @@ class GamePlayViewController: UIViewController {
         override func viewDidLoad() {
             super.viewDidLoad()
             
-            // Style views
+            //MARK: Style views
               styleOuterCardView(totalPointsScoredView)
               styleOuterCardView(gamesPlayedView)
               styleOuterCardView(scoringEfficiencyView)
@@ -77,16 +77,36 @@ class GamePlayViewController: UIViewController {
               styleOuterCardView(teamPerformanceView)
             
             
-            if let pieChartView = goalsPieChartView as? GoalsPieChartView {
-                    pieChartView.gameLogs = gameLogs
-                    pieChartView.loadData()
-                }
+//            if let pieChartView = goalsPieChartView as? GoalsPieChartView {
+//                    pieChartView.gameLogs = gameLogs
+//                    pieChartView.loadDataFromSupabase()
+//                }
             
-            // Filter logs for the logged-in athlete
-            let playerGameLogs = gameLogs.filter { $0.playerID == loggedInPlayerID }
+            Task {
+                   await fetchPlayerGameLogs()
+               }
+        }
+    
+    //MARK: FETCH PLAYERS
+    private func fetchPlayerGameLogs() async {
+        do {
+            // Replace `loggedInPlayerID` with the actual logged-in player's ID
+            //guard let sessionuser = sessionuser else { return }
+            
+            // Fetch game logs for the logged-in player
+            let response = try await supabase
+                .from("GameLog")
+                .select("*")
+                .eq("playerID", value: sessionuser.uuidString)
+                .execute()
+            
+            let decoder = JSONDecoder()
+            decoder.dateDecodingStrategy = .iso8601
+            let playerGameLogs = try decoder.decode([GameLogtable].self, from: response.data)
+            
             guard !playerGameLogs.isEmpty else { return }
             
-            // Calculate metrics
+            // MARK: Calculate metrics
             let totalPoints = playerGameLogs.reduce(0) { $0 + ($1.points2 + $1.points3 + $1.freeThrows) }
             let gamesPlayed = playerGameLogs.count
             let pointsPerGameValue = Double(totalPoints) / Double(gamesPlayed)
@@ -106,34 +126,33 @@ class GamePlayViewController: UIViewController {
             let totalTurnovers = playerGameLogs.reduce(0) { $0 + $1.fouls }
             let assistsToTurnoverRatio = totalTurnovers == 0 ? "N/A" : "\(totalAssists):\(totalTurnovers)"
             
-            // Update UI
-            totalPointsScoredLabel.text = "\(totalPoints)"
-            gamesPlayedLabel.text = "\(gamesPlayed)"
-            pointsPerGame.text = String(format: "%.1f", pointsPerGameValue)
-            percentageIncrease.text = String(format: "%.2f%%", scoringPercentageIncrease)
-            percentageIncrease.textColor = scoringPercentageIncrease < 0 ? .red : .green
-            
-            reboundsNumber.text = String(format: "%.1f", avgRebounds)
-            reboundsPercentageIncrease.text = String(format: "%.2f%%", reboundsPercentageIncrease1)
-            reboundsPercentageIncrease.textColor = reboundsPercentageIncrease1 < 0 ? .red : .green
-            
-            assistsToTurnoverLabel.text = assistsToTurnoverRatio
-            
-            // Graphs
-            let pointsData = playerGameLogs.map { CGFloat($0.points2 + $0.points3 + $0.freeThrows) }
-            let reboundsData = playerGameLogs.map { CGFloat($0.rebounds) }
-           // let assistsToTurnoverData = playerGameLogs.map { CGFloat($0.assists - $0.fouls) } // Example ratio difference
-            
-            drawLineGraph(in: scoringEfficiencyLineGraphView, dataPoints: pointsData)
-            drawLineGraph(in: reboundsIncreaseLinceGraphView, dataPoints: reboundsData)
-//            drawLineGraph(in: assistsToTurnoverLineGraphView, dataPoints: assistsToTurnoverData)
-            
-//            let assistsToTurnoverPairs = playerGameLogs.map { (CGFloat($0.assists), CGFloat($0.fouls)) }
-//               drawScatterPlot(in: assistsToTurnoverLineGraphView, dataPoints: assistsToTurnoverPairs)
-            
+            // MARK: Update UI on the main thread
+            DispatchQueue.main.async {
+                self.totalPointsScoredLabel.text = "\(totalPoints)"
+                self.gamesPlayedLabel.text = "\(gamesPlayed)"
+                self.pointsPerGame.text = String(format: "%.1f", pointsPerGameValue)
+                self.percentageIncrease.text = String(format: "%.2f%%", scoringPercentageIncrease)
+                self.percentageIncrease.textColor = scoringPercentageIncrease < 0 ? .red : .green
+                
+                self.reboundsNumber.text = String(format: "%.1f", avgRebounds)
+                self.reboundsPercentageIncrease.text = String(format: "%.2f%%", reboundsPercentageIncrease1)
+                self.reboundsPercentageIncrease.textColor = reboundsPercentageIncrease1 < 0 ? .red : .green
+                
+                self.assistsToTurnoverLabel.text = assistsToTurnoverRatio
+                
+                // MARK: Graphs
+                let pointsData = playerGameLogs.map { CGFloat($0.points2 + $0.points3 + $0.freeThrows) }
+                let reboundsData = playerGameLogs.map { CGFloat($0.rebounds) }
+                
+                self.drawLineGraph(in: self.scoringEfficiencyLineGraphView, dataPoints: pointsData)
+                self.drawLineGraph(in: self.reboundsIncreaseLinceGraphView, dataPoints: reboundsData)
+            }
+        } catch {
+            print("Error fetching player game logs: \(error)")
         }
+    }
 
-        // Styling function remains the same
+        //MARK: Styling function remains the same
         func styleOuterCardView(_ view: UIView) {
             view.layer.cornerRadius = 10
             view.layer.shadowColor = UIColor.black.cgColor
@@ -142,7 +161,7 @@ class GamePlayViewController: UIViewController {
             view.layer.shadowRadius = 4
         }
         
-        // Graph drawing function remains the same
+        //MARK: Graph drawing function remains the same
         func drawLineGraph(in view: UIView, dataPoints: [CGFloat]) {
             let path = UIBezierPath()
             let width = view.bounds.width
@@ -180,7 +199,7 @@ class GamePlayViewController: UIViewController {
                 view.addSubview(dot)
             }
         }
-    // New scatter plot function
+    //MARK: New scatter plot function
     func drawScatterPlot(in view: UIView, dataPoints: [(CGFloat, CGFloat)]) {
         let width = view.bounds.width
         let height = view.bounds.height
@@ -203,7 +222,7 @@ class GamePlayViewController: UIViewController {
         addAxes(to: view)
     }
 
-    // Helper function to add axes
+    //MARK: Helper function to add axes
     func addAxes(to view: UIView) {
         let width = view.bounds.width
         let height = view.bounds.height
