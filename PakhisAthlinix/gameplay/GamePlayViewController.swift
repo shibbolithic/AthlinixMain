@@ -162,43 +162,67 @@ class GamePlayViewController: UIViewController {
         }
         
         //MARK: Graph drawing function remains the same
-        func drawLineGraph(in view: UIView, dataPoints: [CGFloat]) {
-            let path = UIBezierPath()
-            let width = view.bounds.width
-            let height = view.bounds.height
-            let maxDataPoint = dataPoints.max() ?? 1
-            
-            path.move(to: CGPoint(x: 0, y: height - (dataPoints[0] / maxDataPoint * height)))
-            
-            for (index, value) in dataPoints.enumerated() {
-                let x = CGFloat(index) * (width / CGFloat(dataPoints.count - 1))
-                let y = height - (value / maxDataPoint * height)
-                path.addLine(to: CGPoint(x: x, y: y))
-            }
-            
-            let shapeLayer = CAShapeLayer()
-            shapeLayer.path = path.cgPath
-            shapeLayer.strokeColor = UIColor.systemRed.cgColor
-            shapeLayer.lineWidth = 2
-            shapeLayer.fillColor = UIColor.clear.cgColor
-            
-            let animation = CABasicAnimation(keyPath: "strokeEnd")
-            animation.fromValue = 0
-            animation.toValue = 1
-            animation.duration = 1.5
-            shapeLayer.add(animation, forKey: "lineAnimation")
-            
-            view.layer.addSublayer(shapeLayer)
-            
-            for (index, value) in dataPoints.enumerated() {
-                let x = CGFloat(index) * (width / CGFloat(dataPoints.count - 1))
-                let y = height - (value / maxDataPoint * height)
-                let dot = UIView(frame: CGRect(x: x - 2.5, y: y - 2.5, width: 5, height: 5))
-                dot.backgroundColor = UIColor.systemRed
-                dot.layer.cornerRadius = 2.5
-                view.addSubview(dot)
-            }
+    func drawLineGraph(in view: UIView, dataPoints: [CGFloat]) {
+        // Ensure the graph is clipped within the view bounds
+        view.clipsToBounds = true
+
+        // Clear existing layers and subviews
+        view.layer.sublayers?.forEach { $0.removeFromSuperlayer() }
+        view.subviews.forEach { $0.removeFromSuperview() }
+
+        guard !dataPoints.isEmpty else { return } // Avoid errors with empty data
+        
+        let path = UIBezierPath()
+        let width = view.bounds.width
+        let height = view.bounds.height
+        let padding: CGFloat = 10.0 // Padding for the graph
+        
+        // Normalize data to fit within the view
+        let maxDataPoint = dataPoints.max() ?? 1
+        let minDataPoint = dataPoints.min() ?? 0
+        let range = maxDataPoint - minDataPoint
+        let scaleFactor = range > 0 ? (height - 2 * padding) / range : 1.0
+        
+        // Start the path
+        path.move(to: CGPoint(
+            x: padding,
+            y: height - padding - ((dataPoints[0] - minDataPoint) * scaleFactor)
+        ))
+        
+        for (index, value) in dataPoints.enumerated() {
+            let x = CGFloat(index) * (width - 2 * padding) / CGFloat(dataPoints.count - 1) + padding
+            let y = height - padding - ((value - minDataPoint) * scaleFactor)
+            path.addLine(to: CGPoint(x: x, y: y))
         }
+
+        // Create and style the shape layer
+        let shapeLayer = CAShapeLayer()
+        shapeLayer.path = path.cgPath
+        shapeLayer.strokeColor = UIColor.systemRed.cgColor
+        shapeLayer.lineWidth = 2
+        shapeLayer.fillColor = UIColor.clear.cgColor
+
+        // Add animation
+        let animation = CABasicAnimation(keyPath: "strokeEnd")
+        animation.fromValue = 0
+        animation.toValue = 1
+        animation.duration = 1.5
+        shapeLayer.add(animation, forKey: "lineAnimation")
+
+        view.layer.addSublayer(shapeLayer)
+
+        // Add dots at data points
+        for (index, value) in dataPoints.enumerated() {
+            let x = CGFloat(index) * (width - 2 * padding) / CGFloat(dataPoints.count - 1) + padding
+            let y = height - padding - ((value - minDataPoint) * scaleFactor)
+            let dot = UIView(frame: CGRect(x: x - 2.5, y: y - 2.5, width: 5, height: 5))
+            dot.backgroundColor = UIColor.systemRed
+            dot.layer.cornerRadius = 2.5
+            view.addSubview(dot)
+        }
+    }
+
+
     //MARK: New scatter plot function
     func drawScatterPlot(in view: UIView, dataPoints: [(CGFloat, CGFloat)]) {
         let width = view.bounds.width

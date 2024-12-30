@@ -13,40 +13,73 @@ class PointsScoredBarChartView: UIView {
     //MARK: Define years dynamically or hardcode specific years
     let years = ["2024", "2023", "2022", "2021", "2020"]
     var values: [CGFloat] = []
-
-//    var loggedInUserID: String = "1" // Example logged-in user ID
+    
+    //    var loggedInUserID: String = "1" // Example logged-in user ID
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        calculateValuesForLoggedInUser()
-    }
+        Task {
+            await fetchDataForLoggedInUser()
+        }    }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
-        calculateValuesForLoggedInUser()
-    }
+        Task {
+            await fetchDataForLoggedInUser()
+        }    }
     //MARK: fetch data
-    private func calculateValuesForLoggedInUser() {
-        // Initialize values with zeros for each year
-        var yearScores: [String: CGFloat] = years.reduce(into: [:]) { $0[$1] = 0 }
+    private func fetchDataForLoggedInUser() async {
+        //guard let userID = loggedInUserID else { return }
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
         
-        // Process game logs to calculate points scored by the logged-in user
-        for gameLog in gameLogs where gameLog.playerID == loggedInUserID {
-            if let game = games.first(where: { $0.gameID == gameLog.gameID }),
-               let year = Calendar.current.dateComponents([.year], from: game.dateOfGame).year {
-                let yearString = String(year)
-                if yearScores[yearString] != nil {
-                    yearScores[yearString]! += CGFloat(gameLog.points2 * 2 + gameLog.points3 * 3 + gameLog.freeThrows)
+        do {
+            // Fetch game logs for the logged-in user
+            let gameLogsResponse = try await supabase
+                .from("GameLog")
+                .select("*")
+                .eq("playerID", value: sessionuser.uuidString)
+                .execute()
+            let gameLogs = try JSONDecoder().decode([GameLogtable].self, from: gameLogsResponse.data)
+            
+            // Fetch game details for calculating years
+            let gamesResponse = try await supabase
+                .from("Game")
+                .select("*")
+                .execute()
+            let games = try JSONDecoder().decode([GameTable].self, from: gamesResponse.data)
+            
+            var yearScores: [String: CGFloat] = years.reduce(into: [:]) { $0[$1] = 0 }
+            
+            for gameLog in gameLogs {
+                if let game = games.first(where: { $0.gameID == gameLog.gameID }),
+                   let date = dateFormatter.date(from: game.dateOfGame), // Parse date string to Date
+                   let year = Calendar.current.dateComponents([.year], from: date).year {
+                    let yearString = String(year)
+                    if yearScores[yearString] != nil {
+                        yearScores[yearString]! += CGFloat(gameLog.points2 + gameLog.points3 + gameLog.freeThrows)
+                        print(gameLog.points2 + gameLog.points3 + gameLog.freeThrows)
+                    }
                 }
             }
+            
+            // Update the values array
+            values = years.map { yearScores[$0] ?? 0 }
+            print(values)
+            // Redraw the view with the fetched data
+            DispatchQueue.main.async {
+                self.setNeedsDisplay()
+            }
+        } catch {
+            print("Error fetching data: \(error)")
         }
-        
-        // Map year scores to the values array
-        values = years.map { yearScores[$0] ?? 0 }
     }
     //MARK: draw func
     override func draw(_ rect: CGRect) {
         guard let context = UIGraphicsGetCurrentContext() else { return }
+        
+        // Remove all existing subviews (e.g., UILabels from previous renders)
+        self.subviews.forEach { $0.removeFromSuperview() }
         
         // Setup dimensions and styles
         let maxBarHeight: CGFloat = rect.height * 0.6
@@ -117,7 +150,7 @@ class PointsScoredBarChartView: UIView {
             self.addSubview(yearLabel)
         }
         
-        //MARK:  Draw connecting line
+        // Draw connecting line
         context.setStrokeColor(lineColor.cgColor)
         context.setLineWidth(2)
         context.setLineJoin(.round)

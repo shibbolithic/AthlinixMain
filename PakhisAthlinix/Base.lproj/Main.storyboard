@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="hZh-Pr-VHn">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="ode-KT-qc5">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
@@ -1489,7 +1489,7 @@
                                                                 <nil key="textColor"/>
                                                                 <nil key="highlightedColor"/>
                                                             </label>
-                                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6Zk-4W-fV6">
+                                                            <view contentMode="scaleAspectFit" translatesAutoresizingMaskIntoConstraints="NO" id="6Zk-4W-fV6">
                                                                 <rect key="frame" x="128" y="41.333333333333357" width="225" height="180.66666666666663"/>
                                                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                             </view>
@@ -1542,7 +1542,7 @@
                                                                         <nil key="highlightedColor"/>
                                                                     </label>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="9.3" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kVJ-65-Yaq">
-                                                                        <rect key="frame" x="11.66666666666667" y="79.666666666666629" width="29.333333333333329" height="24"/>
+                                                                        <rect key="frame" x="12" y="79.666666666666629" width="29" height="24"/>
                                                                         <constraints>
                                                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="29" id="Qzv-qj-ISf"/>
                                                                         </constraints>
@@ -1556,24 +1556,23 @@
                                                                         <color key="textColor" red="0.20392156859999999" green="0.78039215689999997" blue="0.34901960780000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                                         <nil key="highlightedColor"/>
                                                                     </label>
-                                                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="0cG-14-asN">
-                                                                        <rect key="frame" x="74.666666666666671" y="75" width="90.000000000000014" height="67"/>
+                                                                    <view contentMode="scaleAspectFit" translatesAutoresizingMaskIntoConstraints="NO" id="0cG-14-asN">
+                                                                        <rect key="frame" x="56.000000000000007" y="75" width="108.66666666666669" height="67"/>
                                                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                                     </view>
                                                                 </subviews>
                                                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                                 <constraints>
                                                                     <constraint firstAttribute="trailing" secondItem="g2R-W3-eGT" secondAttribute="trailing" constant="46.670000000000002" id="0N5-Gn-Fbw"/>
+                                                                    <constraint firstAttribute="trailing" secondItem="0cG-14-asN" secondAttribute="trailing" constant="7.6699999999999999" id="5Yh-Mj-6OH"/>
                                                                     <constraint firstItem="qSy-td-odd" firstAttribute="top" secondItem="xVl-0V-T6d" secondAttribute="top" constant="8" id="6jQ-BL-aLF"/>
                                                                     <constraint firstAttribute="bottom" secondItem="g2R-W3-eGT" secondAttribute="bottom" constant="83" id="AA2-jD-eEW"/>
                                                                     <constraint firstItem="le4-0Q-TPj" firstAttribute="leading" secondItem="g2R-W3-eGT" secondAttribute="leading" id="Wan-jF-KAc"/>
-                                                                    <constraint firstItem="0cG-14-asN" firstAttribute="leading" secondItem="le4-0Q-TPj" secondAttribute="trailing" constant="30" id="WcJ-pO-nqv"/>
-                                                                    <constraint firstAttribute="trailing" secondItem="0cG-14-asN" secondAttribute="trailing" constant="8" id="XSa-ij-yDU"/>
                                                                     <constraint firstItem="qSy-td-odd" firstAttribute="leading" secondItem="xVl-0V-T6d" secondAttribute="leading" constant="8" id="XWK-fU-7Fe"/>
                                                                     <constraint firstAttribute="bottom" secondItem="0cG-14-asN" secondAttribute="bottom" constant="8" id="cEu-zy-wbH"/>
                                                                     <constraint firstItem="g2R-W3-eGT" firstAttribute="top" secondItem="qSy-td-odd" secondAttribute="bottom" constant="1" id="dy0-UR-05f"/>
+                                                                    <constraint firstItem="0cG-14-asN" firstAttribute="leading" secondItem="le4-0Q-TPj" secondAttribute="trailing" constant="11.33" id="fT4-6o-WKy"/>
                                                                     <constraint firstItem="le4-0Q-TPj" firstAttribute="centerX" secondItem="kVJ-65-Yaq" secondAttribute="centerX" id="hDP-k0-bbr"/>
-                                                                    <constraint firstItem="0cG-14-asN" firstAttribute="leading" secondItem="kVJ-65-Yaq" secondAttribute="trailing" constant="33.666666666666686" id="i4S-L9-BAX"/>
                                                                     <constraint firstItem="le4-0Q-TPj" firstAttribute="top" secondItem="kVJ-65-Yaq" secondAttribute="bottom" constant="2" id="mXf-YT-1ab"/>
                                                                     <constraint firstItem="g2R-W3-eGT" firstAttribute="leading" secondItem="xVl-0V-T6d" secondAttribute="leading" constant="8" id="n54-8v-asY"/>
                                                                     <constraint firstItem="0cG-14-asN" firstAttribute="top" secondItem="g2R-W3-eGT" secondAttribute="bottom" constant="8" id="nLZ-yP-A2S"/>
@@ -1963,7 +1962,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="oeT-BM-rkh" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1240" y="2427"/>
+            <point key="canvasLocation" x="1238.9312977099237" y="2426.7605633802818"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="3OE-t3-hNK">

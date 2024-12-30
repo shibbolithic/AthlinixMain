@@ -173,7 +173,6 @@ class HomeScreenViewController: UIViewController, UICollectionViewDelegate, UICo
     }
     
     
-    // MARK: - Pinned Matches
     // MARK: - Fetch Best Match
     func fetchBestMatch(forPlayerID playerID: String) -> Game? {
         // Filter games where the player participated
