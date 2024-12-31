@@ -44,7 +44,7 @@ class MatchHistoryViewController: UIViewController, UITableViewDataSource, UITab
 
         // Fetch game logs for the logged-in user
         let gameLogsResponse = try await supabase.from("GameLog").select("*").eq("playerID", value: sessionuser).execute()
-        gameLogs = try decoder.decode([GameLogtable].self, from: gameLogsResponse.data)
+                gameLogs = try decoder.decode([GameLogtable].self, from: gameLogsResponse.data)
 
         // Extract game IDs from the user's game logs
         let userGameIDs = Set(gameLogs.map { $0.gameID })

@@ -122,6 +122,23 @@ struct GameTable: Codable, Equatable{
     var team2finalScore: Int
 }
 
+struct GameGAMEPLAY: Codable, Equatable{
+    let gameID: UUID
+    var team1ID: UUID
+    var team2ID: UUID
+    var dateOfGame: String
+    var venue: String
+    var team1finalScore: Int
+    var team2finalScore: Int
+    
+    var date: Date? {
+            // Convert `dateOfGame` to a `Date` when needed
+            let formatter = DateFormatter()
+            formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ" // Match your backend date format
+            return formatter.date(from: dateOfGame)
+        }
+}
+
 struct PostsTable:Codable, Equatable{
     let postID: UUID
     let createdBy: UUID // User ID

@@ -8,7 +8,7 @@ import UIKit
 
 class GamePerformanceBarChartView: UIView {
    
-    // Data properties
+    //MARK: Data properties
     var months: [String] = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"]
     var data: [[CGFloat]] = []
     let colors: [UIColor] = [
@@ -18,19 +18,94 @@ class GamePerformanceBarChartView: UIView {
         UIColor(red: 147/255, green: 170/255, blue: 253/255, alpha: 1.0)  // #93AAFD
     ]
     
-    // Tap handling
+    
+    
+    //MARK:  Tap handling
     private var barFrames: [(CGRect, CGFloat)] = [] // Stores the frames of bars and their data values
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupGestureRecognizer()
-        self.data = aggregateGameData(gameLogs: gameLogs, games: games) // Aggregate data
+        self.data = [[CGFloat]](repeating: [CGFloat](repeating: 0, count: 12), count: 4)
+            // Fetch data asynchronously
+            fetchData()
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         setupGestureRecognizer()
-        self.data = aggregateGameData(gameLogs: gameLogs, games: games) // Aggregate data
+        self.data = [[CGFloat]](repeating: [CGFloat](repeating: 0, count: 12), count: 4)
+            
+            // Fetch data asynchronously
+            fetchData() // Aggregate data
+        
+    }
+    //MARK: fetchData
+    private func fetchData() {
+        Task {
+            do {
+                let aggregatedData = try await aggregateGameData()
+                DispatchQueue.main.async {
+                    self.data = aggregatedData
+                    self.setNeedsDisplay() // Redraw the view
+                }
+            } catch {
+                print("Error fetching data: \(error)")
+            }
+        }
+    }
+    
+    //MARK: Function to aggregate data for the chart based on the game logs
+    func aggregateGameData() async throws -> [[CGFloat]] {
+        var aggregatedData = [[CGFloat]](repeating: [CGFloat](repeating: 0, count: 12), count: 4)
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+
+        // Fetch game logs for the logged-in user
+        let gameLogsResponse = try await supabase.from("GameLog").select("*").eq("playerID", value: sessionuser).execute()
+        let gameLogs = try decoder.decode([GameLogtable].self, from: gameLogsResponse.data)
+
+        // Extract game IDs from the user's game logs
+        let userGameIDs = Set(gameLogs.map { $0.gameID })
+
+        // Fetch games associated with the user's logs
+        let gamesResponse = try await supabase
+            .from("Game")
+            .select("*")
+            .in("gameID", values: Array(userGameIDs)).execute()
+        let games = try decoder.decode([GameTable].self, from: gamesResponse.data)
+
+        // Configure a custom DateFormatter for "YYYY-MM-DD"
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        dateFormatter.timeZone = TimeZone(secondsFromGMT: 0) // Assuming UTC
+
+        // Iterate through game logs and aggregate stats for each month
+        for log in gameLogs {
+            // Find the associated game by matching game ID or other identifying property
+            if let game = games.first(where: { $0.gameID == log.gameID }) {
+                // Convert dateOfGame from String to Date
+                guard let gameDate = dateFormatter.date(from: game.dateOfGame) else {
+                    print("Invalid date format for game: \(game.dateOfGame)")
+                    continue
+                }
+
+                let calendar = Calendar.current
+                let month = calendar.component(.month, from: gameDate) - 1 // Month 1 is January, 0-indexed for the array
+
+                // Ensure the month is within the valid range (0 to 11)
+                if month >= 0 && month < 12 {
+                    aggregatedData[0][month] += CGFloat(log.points2)    // 2-pointers
+                    aggregatedData[1][month] += CGFloat(log.points3)    // 3-pointers
+                    aggregatedData[2][month] += CGFloat(log.rebounds)   // Rebounds
+                    aggregatedData[3][month] += CGFloat(log.freeThrows) // Free Throws
+                } else {
+                    print("Invalid month: \(month) for game date: \(gameDate)")
+                }
+            }
+        }
+        print(aggregatedData)
+        return aggregatedData
     }
     
     private func setupGestureRecognizer() {
@@ -38,6 +113,7 @@ class GamePerformanceBarChartView: UIView {
         self.addGestureRecognizer(tapGesture)
     }
     
+   // MARK: Draw Func
     override func draw(_ rect: CGRect) {
         guard let context = UIGraphicsGetCurrentContext() else { return }
         
@@ -103,7 +179,7 @@ class GamePerformanceBarChartView: UIView {
             addSubview(label)
         }
     }
-    
+    //MARK: handle tap
     @objc private func handleTap(_ sender: UITapGestureRecognizer) {
         let tapLocation = sender.location(in: self)
         
@@ -116,6 +192,7 @@ class GamePerformanceBarChartView: UIView {
         }
     }
     
+    //MARK:  Show Data Point
     private func showDataPoint(value: CGFloat, at barFrame: CGRect) {
         let dataLabel = UILabel()
         dataLabel.text = "\(Int(value))"
@@ -140,33 +217,4 @@ class GamePerformanceBarChartView: UIView {
             dataLabel.removeFromSuperview()
         }
     }
-    
-    // Function to aggregate data for the chart based on the game logs
-    func aggregateGameData(gameLogs: [GameLog], games: [Game]) -> [[CGFloat]] {
-        var aggregatedData = [[CGFloat]](repeating: [CGFloat](repeating: 0, count: 12), count: 4)
-        
-        // Iterate through game logs and aggregate stats for each month
-        for log in gameLogs {
-            // Find the associated game by matching game ID or other identifying property
-            if let game = games.first(where: { $0.gameID == log.gameID }) { // Assuming `gameID` links `GameLog` to `Game`
-                let gameDate = game.dateOfGame
-                let calendar = Calendar.current
-                let month = calendar.component(.month, from: gameDate) - 1 // Month 1 is January, 0-indexed for the array
-                
-                // Ensure the month is within the valid range (0 to 11)
-                if month >= 0 && month < 12 {
-                    aggregatedData[0][month] += CGFloat(log.points2)    // 2-pointers
-                    aggregatedData[1][month] += CGFloat(log.points3)    // 3-pointers
-                    aggregatedData[2][month] += CGFloat(log.rebounds)   // Rebounds
-                    aggregatedData[3][month] += CGFloat(log.freeThrows) // Free Throws
-                } else {
-                    print("Invalid month: \(month) for game date: \(gameDate)")
-                }
-            }
-        }
-        
-        return aggregatedData
-    }
-
-
 }
