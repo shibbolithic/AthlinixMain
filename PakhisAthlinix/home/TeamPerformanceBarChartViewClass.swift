@@ -8,7 +8,7 @@
 
 import UIKit
 
-class TeamPerformanceBarChartView: UIView {
+class TeamPerformanceBarChartViewClass: UIView {
    
     // Data for the graph
     var playerScores: [CGFloat] = [] // Holds scores from GameLogs
