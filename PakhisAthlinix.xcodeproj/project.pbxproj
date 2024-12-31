@@ -7,12 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		34AB2B352D11DFEB00C31B23 /* CreatePostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34AB2B342D11DFEB00C31B23 /* CreatePostViewController.swift */; };
+		347D66642D15EF71009A6EBD /* Auth in Frameworks */ = {isa = PBXBuildFile; productRef = 347D66632D15EF71009A6EBD /* Auth */; };
+		347D66662D15EF71009A6EBD /* Functions in Frameworks */ = {isa = PBXBuildFile; productRef = 347D66652D15EF71009A6EBD /* Functions */; };
+		347D66682D15EF71009A6EBD /* PostgREST in Frameworks */ = {isa = PBXBuildFile; productRef = 347D66672D15EF71009A6EBD /* PostgREST */; };
+		347D666A2D15EF71009A6EBD /* Realtime in Frameworks */ = {isa = PBXBuildFile; productRef = 347D66692D15EF71009A6EBD /* Realtime */; };
+		347D666C2D15EF71009A6EBD /* Storage in Frameworks */ = {isa = PBXBuildFile; productRef = 347D666B2D15EF71009A6EBD /* Storage */; };
+		347D666E2D15EF71009A6EBD /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = 347D666D2D15EF71009A6EBD /* Supabase */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		34598B762D0CACE60011C7A6 /* PakhisAthlinix.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PakhisAthlinix.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		34AB2B342D11DFEB00C31B23 /* CreatePostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreatePostViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -41,6 +45,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				347D66682D15EF71009A6EBD /* PostgREST in Frameworks */,
+				347D66662D15EF71009A6EBD /* Functions in Frameworks */,
+				347D666E2D15EF71009A6EBD /* Supabase in Frameworks */,
+				347D66642D15EF71009A6EBD /* Auth in Frameworks */,
+				347D666C2D15EF71009A6EBD /* Storage in Frameworks */,
+				347D666A2D15EF71009A6EBD /* Realtime in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -52,7 +62,6 @@
 			children = (
 				34598B782D0CACE60011C7A6 /* PakhisAthlinix */,
 				34598B772D0CACE60011C7A6 /* Products */,
-				34AB2B342D11DFEB00C31B23 /* CreatePostViewController.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -84,6 +93,12 @@
 			);
 			name = PakhisAthlinix;
 			packageProductDependencies = (
+				347D66632D15EF71009A6EBD /* Auth */,
+				347D66652D15EF71009A6EBD /* Functions */,
+				347D66672D15EF71009A6EBD /* PostgREST */,
+				347D66692D15EF71009A6EBD /* Realtime */,
+				347D666B2D15EF71009A6EBD /* Storage */,
+				347D666D2D15EF71009A6EBD /* Supabase */,
 			);
 			productName = PakhisAthlinix;
 			productReference = 34598B762D0CACE60011C7A6 /* PakhisAthlinix.app */;
@@ -113,6 +128,9 @@
 			);
 			mainGroup = 34598B6D2D0CACE60011C7A6;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				347D66622D15EF71009A6EBD /* XCRemoteSwiftPackageReference "supabase-swift" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 34598B772D0CACE60011C7A6 /* Products */;
 			projectDirPath = "";
@@ -138,7 +156,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				34AB2B352D11DFEB00C31B23 /* CreatePostViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -156,7 +173,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PakhisAthlinix/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -184,7 +201,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PakhisAthlinix/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -342,6 +359,50 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		347D66622D15EF71009A6EBD /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/supabase/supabase-swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.5.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		347D66632D15EF71009A6EBD /* Auth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 347D66622D15EF71009A6EBD /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Auth;
+		};
+		347D66652D15EF71009A6EBD /* Functions */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 347D66622D15EF71009A6EBD /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Functions;
+		};
+		347D66672D15EF71009A6EBD /* PostgREST */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 347D66622D15EF71009A6EBD /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = PostgREST;
+		};
+		347D66692D15EF71009A6EBD /* Realtime */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 347D66622D15EF71009A6EBD /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Realtime;
+		};
+		347D666B2D15EF71009A6EBD /* Storage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 347D66622D15EF71009A6EBD /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Storage;
+		};
+		347D666D2D15EF71009A6EBD /* Supabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 347D66622D15EF71009A6EBD /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Supabase;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 34598B6E2D0CACE60011C7A6 /* Project object */;
 }

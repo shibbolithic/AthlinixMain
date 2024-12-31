@@ -15,45 +15,77 @@ class TeamPerformanceBarChartView: UIView {
     var playerImages: [UIImage?] = [] // Holds images of team members
     
     // Assuming the current team ID and user ID are available
-    var currentTeamID: String = "2" // Replace with dynamic value if necessary
+    var currentTeamID = UUID(uuidString: "ba1faa4a-e1b6-4389-9fc5-8997d54a7dec") // Replace with dynamic value if necessary
     
     override func layoutSubviews() {
         super.layoutSubviews()
         
         // Fetch data from team and game logs
-        if let teamData = fetchTeamPerformanceData(teamID: currentTeamID) {
-            playerScores = teamData.map { $0.score }
-            playerImages = teamData.map { UIImage(named: $0.image) }
-            setNeedsDisplay() // Trigger a redraw with the updated data
+        Task{
+            do{
+                if let teamData = await fetchTeamPerformanceDataSupabase(teamID: currentTeamID!) {
+                    playerScores = teamData.map { $0.score }
+                    playerImages = teamData.map { UIImage(named: $0.image) }
+                    setNeedsDisplay()
+            }
+        }
+        // Trigger a redraw with the updated data
         }
     }
 
     // MARK: - Fetch Team Performance Data
-    private func fetchTeamPerformanceData(teamID: String) -> [(score: CGFloat, image: String)]? {
-        // Filter team members by the given team ID
-        let teamMembers = teamMemberships.filter { $0.teamID == teamID && $0.roleInTeam == "Player" }
-        
-        // Fetch game logs for the team
-        let teamGameLogs = gameLogs.filter { $0.teamID == teamID }
-        
-        var performanceData: [(score: CGFloat, image: String)] = []
-        
-        // Aggregate points and profile images for each player
-        for member in teamMembers {
-            let userID = member.userID
-            let playerLogs = teamGameLogs.filter { $0.playerID == userID }
+    
+    //MARK: SUPABASE
+    private func fetchTeamPerformanceDataSupabase(teamID: UUID) async -> [(score: CGFloat, image: String)]? {
+        do {
+            // Fetch team members with the given team ID and role "Player"
+            let teamMembershipResponse = try await supabase
+                .from("teamMembership")
+                .select("*")
+                .eq("teamID", value: teamID.uuidString)
+                .eq("roleInTeam", value: "athlete")
+                .execute()
+            let teamMembers = try JSONDecoder().decode([TeamMembershipTable].self, from: teamMembershipResponse.data)
             
-            // Calculate total points for the player
-            let totalPoints = playerLogs.reduce(0) { $0 + $1.totalPoints }
+            // Fetch game logs for the given team
+            let gameLogsResponse = try await supabase
+                .from("GameLog")
+                .select("*")
+                .eq("teamID", value: teamID.uuidString)
+                .execute()
+            let gameLogs = try JSONDecoder().decode([GameLogtable].self, from: gameLogsResponse.data)
             
-            // Find player's profile picture
-            let profilePicture = users.first { $0.userID == userID }?.profilePicture ?? ""
+            var performanceData: [(score: CGFloat, image: String)] = []
             
-            performanceData.append((score: CGFloat(totalPoints), image: profilePicture))
+            for member in teamMembers {
+                let userID = member.userID
+                
+                // Filter logs for the specific player
+                let playerLogs = gameLogs.filter { $0.playerID == userID }
+                
+                // Calculate total points for the player
+                let totalPoints = playerLogs.reduce(0) { $0 + $1.totalPoints }
+                
+                // Fetch player's profile picture
+                let userResponse = try await supabase
+                    .from("User")
+                    .select("*")
+                    .eq("userID", value: userID.uuidString)
+                    .execute()
+                let userData = try JSONDecoder().decode([Usertable].self, from: userResponse.data)
+                let profilePicture = userData.first?.profilePicture ?? ""
+                
+                // Append to performance data
+                performanceData.append((score: CGFloat(totalPoints), image: profilePicture))
+            }
+            
+            return performanceData
+        } catch {
+            print("Error fetching team performance data: \(error)")
+            return nil
         }
-        
-        return performanceData
     }
+
     
     // MARK: - Drawing Properties
     var barColor: UIColor = UIColor.systemPurple.withAlphaComponent(0.5)

@@ -36,7 +36,7 @@ class playersStatsTableViewCell: UITableViewCell {
         }
         
         // MARK: - Cell Configuration
-    func configure(with playerLog: GameLog, playerName: String) {
+    func configure(with playerLog: GameLogtable, playerName: String) {
            // Populate player-specific stats using gameLogs
            playerNameLabel.text = playerName
            pointsLabel.text = "\(playerLog.points2 * 2 + playerLog.points3 * 3 + playerLog.freeThrows)"
