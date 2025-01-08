@@ -55,14 +55,19 @@ class GamePerformanceBarChartView: UIView {
         }
     }
     
+    
     //MARK: Function to aggregate data for the chart based on the game logs
     func aggregateGameData() async throws -> [[CGFloat]] {
         var aggregatedData = [[CGFloat]](repeating: [CGFloat](repeating: 0, count: 12), count: 4)
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
+        
+        guard let sessionUserID = SessionManager.shared.getSessionUser() else {
+              throw NSError(domain: "SessionError", code: 1, userInfo: [NSLocalizedDescriptionKey: "No session user is set"])
+          }
 
         // Fetch game logs for the logged-in user
-        let gameLogsResponse = try await supabase.from("GameLog").select("*").eq("playerID", value: sessionuser).execute()
+        let gameLogsResponse = try await supabase.from("GameLog").select("*").eq("playerID", value: sessionUserID).execute()
         let gameLogs = try decoder.decode([GameLogtable].self, from: gameLogsResponse.data)
 
         // Extract game IDs from the user's game logs
@@ -108,6 +113,8 @@ class GamePerformanceBarChartView: UIView {
         return aggregatedData
     }
     
+    
+    //MARK: gesture
     private func setupGestureRecognizer() {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
         self.addGestureRecognizer(tapGesture)

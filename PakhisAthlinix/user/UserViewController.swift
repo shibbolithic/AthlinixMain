@@ -64,22 +64,28 @@ class UserViewController: UIViewController, UITableViewDelegate, UITableViewData
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        fetchTeamsForUserSupabase(userID: sessionuser)
-        
-        Task{
-            do{
-                await setupPrimaryDataSupabase(forUserID: sessionuser)
-                await setupProfileDetailsSupabase()
-                
-                await fetchPosts()
-                
-                if let bestMatch = try await fetchBestMatchSupabase(forPlayerID: sessionuser) {
-                    await updateBestGameViewSupabase(with: bestMatch)
+        if let sessionUserID = SessionManager.shared.getSessionUser() {
+            fetchTeamsForUserSupabase(userID: sessionUserID)
+        }
+
+        Task {
+            if let sessionUserID = SessionManager.shared.getSessionUser() {
+                do {
+                    await setupPrimaryDataSupabase(forUserID: sessionUserID)
+                    await setupProfileDetailsSupabase()
+                    await fetchPosts()
+
+                    if let bestMatch = try await fetchBestMatchSupabase(forPlayerID: sessionUserID) {
+                        await updateBestGameViewSupabase(with: bestMatch)
+                    }
+
+                    await displayBestGameSupabase()
+                } catch {
+                    // Handle the error gracefully
+                    print("Error fetching best match: \(error)")
                 }
-                await displayBestGameSupabase()
-            } catch {
-                // Handle the error gracefully
-                print("Error fetching best match: \(error)")
+            } else {
+                print("Error: No session user is set")
             }
         }
         
@@ -156,16 +162,28 @@ class UserViewController: UIViewController, UITableViewDelegate, UITableViewData
             ast.text = "\(athleteProfile.averageAssistsPerGame)"
             
             // Calculate and display the number of games played
-            let matchesPlayed = await calculateGamesPlayedsupabase(forUserID: sessionuser)
-            matches.text = "\(matchesPlayed)"
-        } else {
-            // Hide athlete-specific labels for coaches
-            position.isHidden = true
-            height.isHidden = true
-            weight.isHidden = true
-            ppg.isHidden = true
-            bpg.isHidden = true
-            ast.isHidden = true
+            if let sessionUserID = SessionManager.shared.getSessionUser() {
+                let matchesPlayed = await calculateGamesPlayedsupabase(forUserID: sessionUserID)
+                matches.text = "\(matchesPlayed)"
+            } else {
+                position.isHidden = true
+                height.isHidden = true
+                weight.isHidden = true
+                ppg.isHidden = true
+                bpg.isHidden = true
+                ast.isHidden = true
+                print("Error: No session user is set")
+            }
+//            let matchesPlayed = await calculateGamesPlayedsupabase(forUserID: sessionuser)
+//            matches.text = "\(matchesPlayed)"
+//        } else {
+//            // Hide athlete-specific labels for coaches
+//            position.isHidden = true
+//            height.isHidden = true
+//            weight.isHidden = true
+//            ppg.isHidden = true
+//            bpg.isHidden = true
+//            ast.isHidden = true
         }
     }
     
@@ -396,9 +414,19 @@ class UserViewController: UIViewController, UITableViewDelegate, UITableViewData
     // MARK: - Fetch Posts
 
     func fetchPosts() async {
+        guard let sessionUserID = SessionManager.shared.getSessionUser() else {
+            print("Error: No session user is set")
+            return
+        }
+        
         do {
             // Fetch posts created by the logged-in user
-            let postsResponse = try await supabase.from("posts").select("*").eq("createdBy", value: sessionuser).execute()
+            let postsResponse = try await supabase
+                .from("posts")
+                .select("*")
+                .eq("createdBy", value: sessionUserID)
+                .execute()
+            
             let postsDecoder = JSONDecoder()
             posts11 = try postsDecoder.decode([PostsTable].self, from: postsResponse.data)
             
@@ -410,6 +438,7 @@ class UserViewController: UIViewController, UITableViewDelegate, UITableViewData
             print("Error fetching posts: \(error)")
         }
     }
+
     
     // MARK: FEED
 

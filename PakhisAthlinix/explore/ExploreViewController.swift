@@ -11,53 +11,106 @@ class ExploreViewController: UIViewController, UITableViewDelegate, UITableViewD
 
     @IBOutlet weak var tableView: UITableView!
     
-   
+    var posts101 = [PostsTable]()
+
         override func viewDidLoad() {
             super.viewDidLoad()
             tableView.delegate = self
             tableView.dataSource = self
+            
+            // Fetch posts asynchronously
+            Task {
+                await fetchPosts()
+            }
+        }
+
+        // Function to fetch posts from Supabase
+        func fetchPosts() async {
+            do {
+                // Fetch posts from Supabase
+                let postsResponse = try await supabase.from("posts").select("*").execute()
+                let postsDecoder = JSONDecoder()
+                posts101 = try postsDecoder.decode([PostsTable].self, from: postsResponse.data)
+                
+                // Reload the table view with fetched data
+                DispatchQueue.main.async {
+                    self.tableView.reloadData()
+                }
+            } catch {
+                print("Error fetching posts: \(error)")
+            }
         }
 
         func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-            return posts.count
+            return posts101.count
         }
 
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "PostCell", for: indexPath) as? PostCell else {
-            return UITableViewCell()
+        func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: "PostCell", for: indexPath) as? PostCell else {
+                return UITableViewCell()
+            }
+
+            let post = posts101[indexPath.row]
+
+            // Configure cell asynchronously to fetch related data from Supabase
+            Task {
+                do {
+                    // Fetch user data
+                    let userResponse = try await supabase.from("User").select("*").eq("userID", value: post.createdBy).single().execute()
+                    let userDecoder = JSONDecoder()
+                    let user = try userDecoder.decode(Usertable.self, from: userResponse.data)
+                    
+                    DispatchQueue.main.async {
+                        cell.athleteNameLabel.text = user.name
+                        cell.profileImageView.image = UIImage(named: (user.profilePicture!.isEmpty ? "defaultProfile" : user.profilePicture)!)
+                    }
+                } catch {
+                    print("Error fetching user data: \(error)")
+                    DispatchQueue.main.async {
+                        cell.athleteNameLabel.text = " "
+                        cell.profileImageView.image = UIImage(named: "defaultProfile")
+                    }
+                }
+                
+                // Fetch linked game and team data if applicable
+                if let linkedGameID = post.linkedGameID {
+                    do {
+                        let gameResponse = try await supabase.from("Game").select("*").eq("gameID", value: linkedGameID).single().execute()
+                        let gameDecoder = JSONDecoder()
+                        let game = try gameDecoder.decode(GameTable.self, from: gameResponse.data)
+                        
+                        let teamResponse = try await supabase.from("teams").select("*").eq("teamID", value: game.team1ID).single().execute()
+                        let teamDecoder = JSONDecoder()
+                        let team = try teamDecoder.decode(TeamTable.self, from: teamResponse.data)
+                        
+                        DispatchQueue.main.async {
+                            cell.teamNameLabel.text = team.teamName
+                            cell.teamLogoImageView.image = UIImage(named: (team.teamLogo!.isEmpty ? "defaultTeamLogo" : team.teamLogo)!)
+                        }
+                    } catch {
+                        print("Error fetching game or team data: \(error)")
+                        DispatchQueue.main.async {
+                            cell.teamNameLabel.text = "Unknown Team"
+                            cell.teamLogoImageView.image = UIImage(named: "defaultTeamLogo")
+                        }
+                    }
+                } else {
+                    DispatchQueue.main.async {
+                        cell.teamNameLabel.text = "Unknown Team"
+                        cell.teamLogoImageView.image = UIImage(named: "defaultTeamLogo")
+                    }
+                }
+                
+                // Configure post images
+                DispatchQueue.main.async {
+                    cell.imageView1.image = UIImage(named: post.image1)
+                    cell.imageView2.image = UIImage(named: post.image2)
+                    cell.imageView3.image = UIImage(named: post.image3)
+                }
+            }
+            
+            return cell
         }
-
-        let post = posts[indexPath.row]
-
-        // User setup
-        if let user = users.first(where: { $0.userID == post.createdBy }) {
-            cell.athleteNameLabel.text = user.name
-            cell.profileImageView.image = UIImage(named: user.profilePicture.isEmpty ? "defaultProfile" : user.profilePicture)
-        } else {
-            cell.athleteNameLabel.text = " "
-            cell.profileImageView.image = UIImage(named: "defaultProfile")
-        }
-
-        // Team setup
-        if let linkedGameID = post.linkedGameID,
-           let game = games.first(where: { $0.gameID == linkedGameID }),
-           let team = teams.first(where: { $0.teamID == game.team1ID }) {
-            cell.teamNameLabel.text = team.teamName
-            cell.teamLogoImageView.image = UIImage(named: team.teamLogo.isEmpty ? "defaultTeamLogo" : team.teamLogo)
-        } else {
-            cell.teamNameLabel.text = "Unknown Team"
-            cell.teamLogoImageView.image = UIImage(named: "defaultTeamLogo")
-        }
-
-        // Post images
-        cell.imageView1.image = UIImage(named: post.image1)
-        cell.imageView2.image = UIImage(named: post.image2)
-        cell.imageView3.image = UIImage(named: post.image3)
-
-        return cell
-    }
-
-
 
         func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
             return 338

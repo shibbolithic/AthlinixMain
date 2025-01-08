@@ -33,12 +33,17 @@ class PointsScoredBarChartView: UIView {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd"
         
+        guard let sessionUserID = SessionManager.shared.getSessionUser() else {
+            print("Error: No session user is set")
+            return
+        }
+        
         do {
             // Fetch game logs for the logged-in user
             let gameLogsResponse = try await supabase
                 .from("GameLog")
                 .select("*")
-                .eq("playerID", value: sessionuser.uuidString)
+                .eq("playerID", value: sessionUserID.uuidString)
                 .execute()
             let gameLogs = try JSONDecoder().decode([GameLogtable].self, from: gameLogsResponse.data)
             

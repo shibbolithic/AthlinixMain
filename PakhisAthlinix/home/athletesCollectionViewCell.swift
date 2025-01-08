@@ -13,12 +13,12 @@ class athletesCollectionViewCell: UICollectionViewCell {
     
     @IBOutlet weak var athleteNameLabel: UILabel!
     
-    func configure(with user: User) {
+    func configure(with user: Usertable) {
            // Set user name
-        athleteNameLabel.text = user.name
+        athleteNameLabel.text = user.username
            
            // Set profile image (assuming you have a profile picture or a placeholder)
-           if let profileImage = UIImage(named: user.profilePicture) {
+        if let profileImage = UIImage(named: user.profilePicture!) {
                athleteProfileImageView.image = profileImage
            } else {
                athleteProfileImageView.image = UIImage(named: "placeholder")  // Fallback image

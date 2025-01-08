@@ -45,13 +45,18 @@ class GoalsPieChartView: UIView {
     }
     
     private func loadDataFromSupabase() async {
+        guard let sessionUserID = SessionManager.shared.getSessionUser() else {
+            print("Error: No session user is set")
+            return
+        }
+        
         do {
             // Fetch game logs for the specific team
            /* let teamID = UUID()*/ // Replace with actual teamID
             let gameLogsResponse = try await supabase
                 .from("GameLog")
                 .select("*")
-                .eq("playerID", value: sessionuser.uuidString)
+                .eq("playerID", value: sessionUserID.uuidString)
                 .execute()
             
             let gameLogs = try JSONDecoder().decode([GameLogtable].self, from: gameLogsResponse.data)

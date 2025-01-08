@@ -26,5 +26,5 @@ class ProfilePostCell: UITableViewCell {
             profileImageView.layer.cornerRadius = profileImageView.frame.size.width / 2
             profileImageView.clipsToBounds = true
         }
-
+    
 }

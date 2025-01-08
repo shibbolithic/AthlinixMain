@@ -31,7 +31,7 @@ enum positions: String, Codable, CaseIterable {
        case shootingGuard = "Shooting Guard"
        case smallForward = "Small Forward"
        case powerForward = "Power Forward"
-       case center = "Center"
+       case center = "Centre"
 }
 
 struct AthleteProfileUpdate: Encodable {
@@ -88,55 +88,16 @@ struct GameLogtable: Codable, Equatable {
     }
 }
 
-struct userphotos: Codable, Equatable{
-    let userID: UUID
-    let profilePicture: String
-}
-
-struct GameLogtable101: Codable, Equatable {
-    //let logID: UUID
-    let gameID: UUID
-    let teamID: UUID
-    let playerID: UUID
-    var points2: Int
-    var points3: Int
-    var freeThrows: Int
-    var rebounds: Int
-    var assists: Int
-    var steals: Int
-    var fouls: Int
-    var missed2Points: Int
-    var missed3Points: Int
-    var totalPoints: Int {
-        return points2 * 2 + points3 * 3
-    }
-}
 
 struct GameTable: Codable, Equatable{
     let gameID: UUID
-    var team1ID: UUID
-    var team2ID: UUID
-    var dateOfGame: String
-    var venue: String
-    var team1finalScore: Int
-    var team2finalScore: Int
-}
-
-struct GameGAMEPLAY: Codable, Equatable{
-    let gameID: UUID
-    var team1ID: UUID
-    var team2ID: UUID
-    var dateOfGame: String
-    var venue: String
-    var team1finalScore: Int
-    var team2finalScore: Int
     
-    var date: Date? {
-            // Convert `dateOfGame` to a `Date` when needed
-            let formatter = DateFormatter()
-            formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ" // Match your backend date format
-            return formatter.date(from: dateOfGame)
-        }
+    var team1ID: UUID
+    var team2ID: UUID
+    var dateOfGame: String
+    var venue: String
+    var team1finalScore: Int
+    var team2finalScore: Int
 }
 
 struct PostsTable:Codable, Equatable{
@@ -149,6 +110,14 @@ struct PostsTable:Codable, Equatable{
     var linkedGameID: UUID? // Nullable
     var likes: Int
 }
+// MARK:   DON'T USE
+struct tempCoach: Codable, Equatable{
+    var teamCoachID:UUID
+    var createrID: UUID
+    var coach1ID: UUID
+    var coach2ID: UUID
+}
+
 
 let heightRange = Array(140...220) // Height in cm
 let weightRange = Array(40...150) // Weight in kg

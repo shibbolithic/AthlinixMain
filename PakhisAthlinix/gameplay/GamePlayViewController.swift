@@ -89,15 +89,17 @@ class GamePlayViewController: UIViewController {
     
     //MARK: FETCH PLAYERS
     private func fetchPlayerGameLogs() async {
+        guard let sessionUserID = SessionManager.shared.getSessionUser() else {
+            print("Error: No session user is set")
+            return
+        }
+
         do {
-            // Replace `loggedInPlayerID` with the actual logged-in player's ID
-            //guard let sessionuser = sessionuser else { return }
-            
             // Fetch game logs for the logged-in player
             let response = try await supabase
                 .from("GameLog")
                 .select("*")
-                .eq("playerID", value: sessionuser.uuidString)
+                .eq("playerID", value: sessionUserID.uuidString)
                 .execute()
             
             let decoder = JSONDecoder()
@@ -151,6 +153,7 @@ class GamePlayViewController: UIViewController {
             print("Error fetching player game logs: \(error)")
         }
     }
+
 
         //MARK: Styling function remains the same
         func styleOuterCardView(_ view: UIView) {

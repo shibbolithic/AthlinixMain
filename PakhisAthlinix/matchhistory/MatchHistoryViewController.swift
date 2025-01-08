@@ -39,12 +39,21 @@ class MatchHistoryViewController: UIViewController, UITableViewDataSource, UITab
        
        // MARK: - Fetch Games, Teams, and Logs
     func fetchGamesAndTeams() async throws {
+        guard let sessionUserID = SessionManager.shared.getSessionUser() else {
+            print("Error: No session user is set")
+            return
+        }
+        
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
 
         // Fetch game logs for the logged-in user
-        let gameLogsResponse = try await supabase.from("GameLog").select("*").eq("playerID", value: sessionuser).execute()
-                gameLogs = try decoder.decode([GameLogtable].self, from: gameLogsResponse.data)
+        let gameLogsResponse = try await supabase
+            .from("GameLog")
+            .select("*")
+            .eq("playerID", value: sessionUserID)
+            .execute()
+        gameLogs = try decoder.decode([GameLogtable].self, from: gameLogsResponse.data)
 
         // Extract game IDs from the user's game logs
         let userGameIDs = Set(gameLogs.map { $0.gameID })
@@ -52,9 +61,9 @@ class MatchHistoryViewController: UIViewController, UITableViewDataSource, UITab
         // Fetch games
         let gamesResponse = try await supabase
             .from("Game")
-            .select("*").in("gameID", values: Array(userGameIDs)).execute()
-        
-           
+            .select("*")
+            .in("gameID", values: Array(userGameIDs))
+            .execute()
         games = try decoder.decode([GameTable].self, from: gamesResponse.data)
 
         // Fetch teams
@@ -68,6 +77,10 @@ class MatchHistoryViewController: UIViewController, UITableViewDataSource, UITab
        
        // MARK: - Get game stats function
     func getGameStats(gameID: UUID) -> (team1Name: String, team1Logo: String, team2Name: String, team2Logo: String, team1Stats: [String: Int], team2Stats: [String: Int]) {
+        guard let sessionUserID = SessionManager.shared.getSessionUser() else {
+            fatalError("Error: No session user is set")
+        }
+        
         // Find the game by ID
         guard let game = games.first(where: { $0.gameID == gameID }) else {
             fatalError("Game not found")
@@ -80,8 +93,8 @@ class MatchHistoryViewController: UIViewController, UITableViewDataSource, UITab
         }
 
         // Get the game logs for the game
-        let team1GameLogs = gameLogs.filter { $0.gameID == gameID && $0.teamID == game.team1ID && $0.playerID == sessionuser }
-        let team2GameLogs = gameLogs.filter { $0.gameID == gameID && $0.teamID == game.team2ID && $0.playerID == sessionuser }
+        let team1GameLogs = gameLogs.filter { $0.gameID == gameID && $0.teamID == game.team1ID && $0.playerID == sessionUserID }
+        let team2GameLogs = gameLogs.filter { $0.gameID == gameID && $0.teamID == game.team2ID && $0.playerID == sessionUserID }
            
         // Calculate total stats for Team 1
         let team1Stats = [
@@ -104,6 +117,7 @@ class MatchHistoryViewController: UIViewController, UITableViewDataSource, UITab
         // Return the result
         return (team1Name: team1.teamName, team1Logo: team1Logo, team2Name: team2.teamName, team2Logo: team2Logo, team1Stats: team1Stats, team2Stats: team2Stats)
     }
+
 
        
        // MARK: - Search Functionality
@@ -140,29 +154,44 @@ class MatchHistoryViewController: UIViewController, UITableViewDataSource, UITab
            let game = filteredGames[indexPath.row]
            let gameStats = getGameStats(gameID: game.gameID)
            cell.configure(with: gameStats)
+           //print(cell)
            return cell
        }
        
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "goToStats",
-           let statsVC = segue.destination as? StatsViewController,
-           let selectedGame = sender as? GameTable {
-            statsVC.selectedGame = selectedGame
-            print("Selected Game: \(selectedGame)")
-            
-            //            var game101: GameTable?
-            //
-            //            if let game101 = game101 {
-            //                        print("Selected Game ID: \(game101.gameID)")
-            //                        // Populate UI elements using the game data
-            //                    }
-        }
-    }
+//    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+//        if segue.identifier == "goToStats" {
+//            if let statsVC = segue.destination as? StatsViewController {
+//                if let selectedGame = sender as? GameTable {
+//                    statsVC.selectedGame = selectedGame
+//                    print("*******")
+//                    print("Selected Game: \(selectedGame)")
+//                    
+//                    //            var game101: GameTable?
+//                    //
+//                    //            if let game101 = game101 {
+//                    //                        print("Selected Game ID: \(game101.gameID)")
+//                    //                        // Populate UI elements using the game data
+//                    //                    }
+//                }
+//            }
+//        }
+//    }
 
-     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let selectedGame = filteredGames[indexPath.row]
-         print(selectedGame)
-        performSegue(withIdentifier: "goToStats", sender: selectedGame)
         
+        // Initialize StatsViewController programmatically
+        let statsVC = storyboard?.instantiateViewController(withIdentifier: "StatsViewController") as? StatsViewController
+       // let statsVC = StatsViewController()
+        statsVC!.selectedGame = selectedGame
+
+        
+        // Print debugging information
+        print("Navigating to StatsViewController with selected game: \(selectedGame)")
+        
+        // Present the StatsViewController
+        
+        
+        navigationController?.pushViewController(statsVC!, animated: true)
     }
    }
