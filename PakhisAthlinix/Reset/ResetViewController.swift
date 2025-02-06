@@ -1,5 +1,5 @@
 //
-//  LoginViewController.swift
+//  ResetViewController.swift
 //  PakhisAthlinix
 //
 //  Created by admin65 on 03/02/25.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-class LoginViewController: UIViewController {
+class ResetViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
