@@ -7,6 +7,7 @@
 
 import UIKit
 import Storage
+import SDWebImage
 
 
 class UserViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
@@ -42,7 +43,7 @@ class UserViewController: UIViewController, UITableViewDelegate, UITableViewData
     @IBOutlet weak var bestGameOpponentTeam3pters: UILabel!
     @IBOutlet weak var bestGameOpponentFreeThrows: UILabel!
     
-    var user: User?
+    //var user: User?
     var athleteProfile: AthleteProfile?
     var teams1: [Teams] = []
     var bestGame: Game?
@@ -64,21 +65,21 @@ class UserViewController: UIViewController, UITableViewDelegate, UITableViewData
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if let sessionUserID = SessionManager.shared.getSessionUser() {
-            fetchTeamsForUserSupabase(userID: sessionUserID)
-        }
-
+        //        if let sessionUserID = await SessionManager.shared.getSessionUser() {
+        //        }
+        
         Task {
-            if let sessionUserID = SessionManager.shared.getSessionUser() {
+            if let sessionUserID = await SessionManager.shared.getSessionUser() {
                 do {
                     await setupPrimaryDataSupabase(forUserID: sessionUserID)
+                    await fetchTeamsForUserSupabase(userID: sessionUserID)
                     await setupProfileDetailsSupabase()
                     await fetchPosts()
-
+                    
                     if let bestMatch = try await fetchBestMatchSupabase(forPlayerID: sessionUserID) {
                         await updateBestGameViewSupabase(with: bestMatch)
                     }
-
+                    
                     await displayBestGameSupabase()
                 } catch {
                     // Handle the error gracefully
@@ -98,7 +99,7 @@ class UserViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     //MARK: Editing Features
-
+    
     // MARK: - Fetch Data from Supabase
     func setupPrimaryDataSupabase(forUserID userID: UUID) async {
         do {
@@ -119,7 +120,7 @@ class UserViewController: UIViewController, UITableViewDelegate, UITableViewData
             print("Error setting up primary data: \(error)")
         }
     }
- 
+    
     // MARK: - Calculate Games Played Supabase
     func calculateGamesPlayedsupabase(forUserID userID: UUID) async -> Int {
         do {
@@ -137,7 +138,7 @@ class UserViewController: UIViewController, UITableViewDelegate, UITableViewData
             return 0
         }
     }
-
+    
     // MARK: - Setup Profile Details Supabase
     func setupProfileDetailsSupabase() async {
         guard let user11 = user11 else {
@@ -162,7 +163,7 @@ class UserViewController: UIViewController, UITableViewDelegate, UITableViewData
             ast.text = "\(athleteProfile.averageAssistsPerGame)"
             
             // Calculate and display the number of games played
-            if let sessionUserID = SessionManager.shared.getSessionUser() {
+            if let sessionUserID = await SessionManager.shared.getSessionUser() {
                 let matchesPlayed = await calculateGamesPlayedsupabase(forUserID: sessionUserID)
                 matches.text = "\(matchesPlayed)"
             } else {
@@ -174,16 +175,16 @@ class UserViewController: UIViewController, UITableViewDelegate, UITableViewData
                 ast.isHidden = true
                 print("Error: No session user is set")
             }
-//            let matchesPlayed = await calculateGamesPlayedsupabase(forUserID: sessionuser)
-//            matches.text = "\(matchesPlayed)"
-//        } else {
-//            // Hide athlete-specific labels for coaches
-//            position.isHidden = true
-//            height.isHidden = true
-//            weight.isHidden = true
-//            ppg.isHidden = true
-//            bpg.isHidden = true
-//            ast.isHidden = true
+            //            let matchesPlayed = await calculateGamesPlayedsupabase(forUserID: sessionuser)
+            //            matches.text = "\(matchesPlayed)"
+            //        } else {
+            //            // Hide athlete-specific labels for coaches
+            //            position.isHidden = true
+            //            height.isHidden = true
+            //            weight.isHidden = true
+            //            ppg.isHidden = true
+            //            bpg.isHidden = true
+            //            ast.isHidden = true
         }
     }
     
@@ -412,9 +413,9 @@ class UserViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     // MARK: - Fetch Posts
-
+    
     func fetchPosts() async {
-        guard let sessionUserID = SessionManager.shared.getSessionUser() else {
+        guard let sessionUserID = await SessionManager.shared.getSessionUser() else {
             print("Error: No session user is set")
             return
         }
@@ -438,10 +439,10 @@ class UserViewController: UIViewController, UITableViewDelegate, UITableViewData
             print("Error fetching posts: \(error)")
         }
     }
-
+    
     
     // MARK: FEED
-
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return posts11.count
     }
@@ -451,19 +452,19 @@ class UserViewController: UIViewController, UITableViewDelegate, UITableViewData
             return UITableViewCell()
         }
         
-        // Fetch the post from the filtered posts array
-        let poster = posts11[indexPath.row]
-        // Configure cell asynchronously to fetch data from Supabase
+        let post = posts11[indexPath.row]
+        
+        // Configure cell asynchronously
         Task {
             do {
                 // Fetch user data
-                let userResponse = try await supabase.from("User").select("*").eq("userID", value: poster.createdBy).single().execute()
+                let userResponse = try await supabase.from("User").select("*").eq("userID", value: post.createdBy).single().execute()
                 let userDecoder = JSONDecoder()
                 let user = try userDecoder.decode(Usertable.self, from: userResponse.data)
                 
                 DispatchQueue.main.async {
                     cell.athleteNameLabel.text = user.name
-                    cell.profileImageView.image = UIImage(named: (user.profilePicture!.isEmpty ? "defaultProfile" : user.profilePicture) ?? " ")
+                    cell.profileImageView.image = UIImage(named: (user.profilePicture!.isEmpty ? "defaultProfile" : user.profilePicture)!)
                 }
             } catch {
                 print("Error fetching user data: \(error)")
@@ -473,8 +474,8 @@ class UserViewController: UIViewController, UITableViewDelegate, UITableViewData
                 }
             }
             
-            // Fetch linked game and team data if applicable
-            if let linkedGameID = poster.linkedGameID {
+            // Fetch linked game and team data
+            if let linkedGameID = post.linkedGameID {
                 do {
                     let gameResponse = try await supabase.from("Game").select("*").eq("gameID", value: linkedGameID).single().execute()
                     let gameDecoder = JSONDecoder()
@@ -486,7 +487,11 @@ class UserViewController: UIViewController, UITableViewDelegate, UITableViewData
                     
                     DispatchQueue.main.async {
                         cell.teamNameLabel.text = team.teamName
-                        cell.teamLogoImageView.image = UIImage(named: (team.teamLogo!.isEmpty ? "defaultTeamLogo" : team.teamLogo) ?? " ")
+                        if let teamLogoURL = team.teamLogo, !teamLogoURL.isEmpty {
+                            cell.teamLogoImageView.sd_setImage(with: URL(string: teamLogoURL), placeholderImage: UIImage(named: "defaultTeamLogo"))
+                        } else {
+                            cell.teamLogoImageView.image = UIImage(named: "defaultTeamLogo")
+                        }
                     }
                 } catch {
                     print("Error fetching game or team data: \(error)")
@@ -502,12 +507,17 @@ class UserViewController: UIViewController, UITableViewDelegate, UITableViewData
                 }
             }
             
-            // Configure post images
+            // Load post images using SDWebImage
             DispatchQueue.main.async {
-                cell.imageView1.image = UIImage(named: poster.image1)
-                cell.imageView2.image = UIImage(named: poster.image2)
-                cell.imageView3.image = UIImage(named: poster.image3)
-
+                if !post.image1.isEmpty {
+                    cell.imageView1.sd_setImage(with: URL(string: post.image1), placeholderImage: UIImage(named: "placeholderImage"))
+                }
+                if !post.image2.isEmpty {
+                    cell.imageView2.sd_setImage(with: URL(string: post.image2), placeholderImage: UIImage(named: "placeholderImage"))
+                }
+                if !post.image3.isEmpty {
+                    cell.imageView3.sd_setImage(with: URL(string: post.image3), placeholderImage: UIImage(named: "placeholderImage"))
+                }
             }
         }
         
@@ -517,6 +527,12 @@ class UserViewController: UIViewController, UITableViewDelegate, UITableViewData
 // MARK: - UICollectionView
 extension UserViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        print("*******")
+        print("*******")
+
+        print(teams11)
+        print("*******")
+
         return teams11.count
     }
     

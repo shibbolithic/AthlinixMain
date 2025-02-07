@@ -5,16 +5,16 @@
 //  Created by admin65 on 13/12/24.
 //
 import Foundation
-// MARK: Users
-var users: [User] = [
-    User(userID: "1", username: "arvind12", name: "Arvind Kumar", email: "arvind@example.com", password: "password123", role: .athlete, profilePicture: "1", bio: "Basketball enthusiast", dateJoined: Date()),
-    User(userID: "2", username: "ravi27", name: "Ravi Shankar", email: "ravi@example.com", password: "password123", role: .athlete, profilePicture: "2", bio: "Aspiring basketballer", dateJoined: Date()),
-    User(userID: "3", username: "neha18", name: "Neha Sharma", email: "neha@example.com", password: "password123", role: .athlete, profilePicture: "4", bio: "Track and field athlete", dateJoined: Date()),
-    User(userID: "4", username: "mohit32", name: "Mohit Gupta", email: "mohit@example.com", password: "password123", role: .athlete, profilePicture: "5", bio: "Cricket lover", dateJoined: Date()),
-    User(userID: "5", username: "priya09", name: "Priya Mehta", email: "priya@example.com", password: "password123", role: .athlete, profilePicture: "6", bio: "Fitness enthusiast", dateJoined: Date()),
-    User(userID: "6", username: "coachArjun", name: "Arjun Sinha", email: "arjun@coach.com", password: "coach123", role: .coach, profilePicture: "7", bio: "Experienced basketball coach", dateJoined: Date()),
-    User(userID: "7", username: "coachManish", name: "Manish Kumar", email: "manish@coach.com", password: "coach123", role: .coach, profilePicture: "8", bio: "Football coach with 10 years of experience", dateJoined: Date())
-]
+//// MARK: Users
+//var users: [Users] = [
+//    User(userID: "1", username: "arvind12", name: "Arvind Kumar", email: "arvind@example.com", password: "password123", role: .athlete, profilePicture: "1", bio: "Basketball enthusiast", dateJoined: Date()),
+//    User(userID: "2", username: "ravi27", name: "Ravi Shankar", email: "ravi@example.com", password: "password123", role: .athlete, profilePicture: "2", bio: "Aspiring basketballer", dateJoined: Date()),
+//    User(userID: "3", username: "neha18", name: "Neha Sharma", email: "neha@example.com", password: "password123", role: .athlete, profilePicture: "4", bio: "Track and field athlete", dateJoined: Date()),
+//    User(userID: "4", username: "mohit32", name: "Mohit Gupta", email: "mohit@example.com", password: "password123", role: .athlete, profilePicture: "5", bio: "Cricket lover", dateJoined: Date()),
+//    User(userID: "5", username: "priya09", name: "Priya Mehta", email: "priya@example.com", password: "password123", role: .athlete, profilePicture: "6", bio: "Fitness enthusiast", dateJoined: Date()),
+//    User(userID: "6", username: "coachArjun", name: "Arjun Sinha", email: "arjun@coach.com", password: "coach123", role: .coach, profilePicture: "7", bio: "Experienced basketball coach", dateJoined: Date()),
+//    User(userID: "7", username: "coachManish", name: "Manish Kumar", email: "manish@coach.com", password: "coach123", role: .coach, profilePicture: "8", bio: "Football coach with 10 years of experience", dateJoined: Date())
+//]
 
 var athleteProfiles: [AthleteProfile] = [
     AthleteProfile(athleteID: "1", height: 5.9, weight: 75.0, experience: 5, position: "Guard", averagePointsPerGame: 12.3, averageReboundsPerGame: 4.5, averageAssistsPerGame: 3.2),

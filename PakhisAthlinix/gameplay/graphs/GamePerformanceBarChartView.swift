@@ -62,7 +62,7 @@ class GamePerformanceBarChartView: UIView {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
         
-        guard let sessionUserID = SessionManager.shared.getSessionUser() else {
+        guard let sessionUserID = await SessionManager.shared.getSessionUser() else {
               throw NSError(domain: "SessionError", code: 1, userInfo: [NSLocalizedDescriptionKey: "No session user is set"])
           }
 

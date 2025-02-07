@@ -23,6 +23,9 @@ class athletesCollectionViewCell: UICollectionViewCell {
            } else {
                athleteProfileImageView.image = UIImage(named: "placeholder")  // Fallback image
            }
+        
+        athleteProfileImageView.layer.cornerRadius = 15
+
            
         
        }

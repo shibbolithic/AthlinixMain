@@ -1,6 +1,6 @@
 import UIKit
 
-class LoginViewController: UIViewController {
+class LoginViewController1: UIViewController {
     
     
 

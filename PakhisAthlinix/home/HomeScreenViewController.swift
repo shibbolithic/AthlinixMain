@@ -5,6 +5,8 @@
 //  Created by admin65 on 14/12/24.
 //
 import UIKit
+import SDWebImage
+
 
 class HomeScreenViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     @IBOutlet weak var headerView: UIView!
@@ -67,7 +69,7 @@ class HomeScreenViewController: UIViewController, UICollectionViewDelegate, UICo
         
         //setupMatchesPlayedVsPointsScoredGraph()
         
-        let viewsToStyle = [pointsScoredImageView, pinnedMatchesCardView, matchesPlayedvsPointsScoredView]
+        let viewsToStyle = [pointsScoredImageView, pinnedMatchesView, matchesPlayedvsPointsScoredView]
         
         for view in viewsToStyle {
             view?.layer.borderColor = UIColor.lightGray.cgColor
@@ -80,7 +82,7 @@ class HomeScreenViewController: UIViewController, UICollectionViewDelegate, UICo
         // Fetch the best match data and update UI
 
         Task {
-            if let sessionUserID = SessionManager.shared.getSessionUser() {
+            if let sessionUserID = await SessionManager.shared.getSessionUser() {
                 if let bestMatch1 = try await fetchBestMatchSupabase(forPlayerID: sessionUserID) {
                     await updateBestMatchViewSupabase(with: bestMatch1)
                 }
@@ -114,7 +116,7 @@ class HomeScreenViewController: UIViewController, UICollectionViewDelegate, UICo
         setupPointsScoredSection()
         // setupPinnedMatches()
         Task{
-            if let sessionUserID = SessionManager.shared.getSessionUser() {
+            if let sessionUserID = await SessionManager.shared.getSessionUser() {
                 await setupHighlightSection(forUserID: sessionUserID)
                 await setupHeader(forUserID: sessionUserID)
                 await setupPointsScoredGraph(for: sessionUserID)
@@ -155,6 +157,7 @@ class HomeScreenViewController: UIViewController, UICollectionViewDelegate, UICo
             // Configure the header view
             DispatchQueue.main.async {
                 self.headerView.layer.cornerRadius = 16
+                self.headerView.backgroundColor = UIColor(hex: "#FD6430")
                 self.profileImageView.layer.cornerRadius = self.profileImageView.frame.width / 2
                 self.profileImageView.clipsToBounds = true
 
@@ -304,37 +307,41 @@ class HomeScreenViewController: UIViewController, UICollectionViewDelegate, UICo
             let postsDecoder = JSONDecoder()
             let userPosts = try postsDecoder.decode([PostsTable].self, from: postsResponse.data)
             print(userPosts)
-            
+
             // Ensure there's at least one post to display
             guard let post = userPosts.last else {
                 print("No posts available to display highlights.")
                 return
             }
-            
+
             // Configure the highlight card view
             highlightCardView.layer.cornerRadius = 12
             highlightCardView.layer.shadowColor = UIColor.black.cgColor
             highlightCardView.layer.shadowOpacity = 0.1
             highlightCardView.layer.shadowOffset = CGSize(width: 0, height: 4)
             highlightCardView.layer.shadowRadius = 8
-            
-            
-            // Set the highlight image and other details dynamically
-            if let highlightImage = UIImage(named: post.image2) {
-                highlightImageView.image = highlightImage
-                highlightImageView.layer.cornerRadius = 12
+
+            // ✅ Load the highlight image from URL using SDWebImage
+            if let imageUrl = URL(string: post.image3) {
+                highlightImageView.sd_setImage(with: imageUrl, placeholderImage: UIImage(named: "placeholder"))
             } else {
-                highlightImageView.image = UIImage(named: "placeholder") // Add a default placeholder image
+                highlightImageView.image = UIImage(named: "placeholder") // Default placeholder
             }
-            
-            highlightGameName.text = post.content // Example: Use the content of the post
+            highlightImageView.layer.cornerRadius = 12
+            highlightImageView.clipsToBounds = true
+
+            // Set other UI elements
+            highlightGameName.text = post.content
+
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "MMM '24"
             highlightDate.text = " " // Format date
+
         } catch {
             print("Error fetching user posts: \(error)")
         }
     }
+
 
 
     
@@ -379,6 +386,17 @@ class HomeScreenViewController: UIViewController, UICollectionViewDelegate, UICo
             return cell
     }
     
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let selectedUser = users101[indexPath.row] // Get the selected user
+        let userID = selectedUser.userID // Assuming `userID` is a property of `Usertable`
+
+        // Navigate to the UserViewController
+        let storyboard = UIStoryboard(name: "Main", bundle: nil) // Replace "Main" with your storyboard name
+        if let userVC = storyboard.instantiateViewController(withIdentifier: "UserViewController") as? UserViewController {
+            userVC.user11 = selectedUser // Pass the selected user
+            self.navigationController?.pushViewController(userVC, animated: true)
+        }
+    }
     
     // MARK: GRAPH
     func setupPointsScoredGraph(for userID: UUID) async {
@@ -533,10 +551,20 @@ class HomeScreenViewController: UIViewController, UICollectionViewDelegate, UICo
     // MARK: Create
     func createPost() {
         // Code for creating a post
-        let createPostVC = CreatePostViewController()
-            
-            // Push CreatePostViewController onto the navigation stack
-            navigationController?.pushViewController(createPostVC, animated: true)
+//        let createPostVC = AddPostViewController()
+//            
+//            // Push CreatePostViewController onto the navigation stack
+//            navigationController?.pushViewController(createPostVC, animated: true)
+        
+        let storyboard = UIStoryboard(name: "Main", bundle: nil) // Replace "Main" with your storyboard name if different
+           if let createPostVC = storyboard.instantiateViewController(withIdentifier: "AddPostViewController") as? AddPostViewController {
+               // Present the AddTeamViewController
+               createPostVC.modalPresentationStyle = .fullScreen // or .overFullScreen if you want a different style
+               self.present(createPostVC, animated: true, completion: nil)
+           } else {
+               print("Could not instantiate AddPostViewController")
+           }
+        print("Create Post tapped")
         
         
         }
@@ -561,7 +589,34 @@ class HomeScreenViewController: UIViewController, UICollectionViewDelegate, UICo
 
     func createGame() {
         // Code for creating a game
+        let storyboard = UIStoryboard(name: "Main", bundle: nil) // Replace "Main" with your storyboard name if different
+           if let addGameVC = storyboard.instantiateViewController(withIdentifier: "AddGameNavigationController") as? AddGameNavigationController {
+               // Present the AddTeamViewController
+               addGameVC.modalPresentationStyle = .fullScreen // or .overFullScreen if you want a different style
+               self.present(addGameVC, animated: true, completion: nil)
+           } else {
+               print("Could not instantiate AddGameViewController")
+           }
         print("Create Game tapped")
     }
+    
+    // MARK: LOL
+    
+//    extension UIColor {
+//        convenience init(hex: String) {
+//            var hexSanitized = hex.trimmingCharacters(in: .whitespacesAndNewlines)
+//            hexSanitized = hexSanitized.replacingOccurrences(of: "#", with: "")
+//
+//            var rgb: UInt64 = 0
+//            Scanner(string: hexSanitized).scanHexInt64(&rgb)
+//
+//            let red = CGFloat((rgb & 0xFF0000) >> 16) / 255.0
+//            let green = CGFloat((rgb & 0x00FF00) >> 8) / 255.0
+//            let blue = CGFloat(rgb & 0x0000FF) / 255.0
+//
+//            self.init(red: red, green: green, blue: blue, alpha: 1.0)
+//        }
+//    }
+
     
 }

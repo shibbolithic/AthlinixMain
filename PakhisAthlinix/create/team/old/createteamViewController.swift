@@ -41,7 +41,7 @@ class createteamViewController: UIViewController {
             Task {
                 do {
                     // Ensure session user is set
-                    guard let sessionUserID = SessionManager.shared.getSessionUser() else {
+                    guard let sessionUserID = await SessionManager.shared.getSessionUser() else {
                         print("Error: No session user is set")
                         return
                     }

@@ -117,63 +117,63 @@ struct tempCoach: Codable, Equatable{
     var coach1ID: UUID
     var coach2ID: UUID
 }
-
-
-let heightRange = Array(140...220) // Height in cm
-let weightRange = Array(40...150) // Weight in kg
-
-import Foundation
-
-struct Game11: Codable {
-    let gameID: String
-    let team1ID: String
-    let team2ID: String
-    let dateOfGame: String
-    let venue: String
-    let team1FinalScore: Int
-    let team2FinalScore: Int
-}
-
-struct GameLog11: Codable {
-    let logID: String
-    let gameID: String
-    let teamID: String
-    let playerID: String
-    let points2: Int
-    let points3: Int
-    let freeThrows: Int
-    let rebounds: Int
-    let assists: Int
-    let steals: Int
-    let fouls: Int
-    let missed2Points: Int
-    let missed3Points: Int
-    let totalPoints: Int
-}
-
-struct Team11: Codable {
-    let teamID: String
-    let dateCreated: Date
-    let teamName: String
-    let teamMotto: String
-    let teamLogo: String
-    let createdBy: String
-}
-
-struct User11: Codable {
-    let userID: String
-    let username: String
-    let name: String
-    let email: String
-    let password: String
-    let profilePicture: String
-    let coverPicture: String?
-    let bio: String?
-    let dateJoined: Date
-    let lastLogin: Date
-    let role: String
-    let createdAt: Date
-}
+//
+//
+//let heightRange = Array(140...220) // Height in cm
+//let weightRange = Array(40...150) // Weight in kg
+//
+//import Foundation
+//
+//struct Game11: Codable {
+//    let gameID: String
+//    let team1ID: String
+//    let team2ID: String
+//    let dateOfGame: String
+//    let venue: String
+//    let team1FinalScore: Int
+//    let team2FinalScore: Int
+//}
+//
+//struct GameLog11: Codable {
+//    let logID: String
+//    let gameID: String
+//    let teamID: String
+//    let playerID: String
+//    let points2: Int
+//    let points3: Int
+//    let freeThrows: Int
+//    let rebounds: Int
+//    let assists: Int
+//    let steals: Int
+//    let fouls: Int
+//    let missed2Points: Int
+//    let missed3Points: Int
+//    let totalPoints: Int
+//}
+//
+//struct Team11: Codable {
+//    let teamID: String
+//    let dateCreated: Date
+//    let teamName: String
+//    let teamMotto: String
+//    let teamLogo: String
+//    let createdBy: String
+//}
+//
+//struct User11: Codable {
+//    let userID: String
+//    let username: String
+//    let name: String
+//    let email: String
+//    let password: String
+//    let profilePicture: String
+//    let coverPicture: String?
+//    let bio: String?
+//    let dateJoined: Date
+//    let lastLogin: Date
+//    let role: String
+//    let createdAt: Date
+//}
 
 //}
 //

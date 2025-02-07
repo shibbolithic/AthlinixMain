@@ -18,14 +18,36 @@ class SessionManager {
     private init() {} // Prevent external initialization
 
     var sessionUser: UUID? // The active user's UUID
+    
+    func getSessionUser() async -> UUID? {
+        do {
+            if let session = try await AuthServices.shared.fetchSession() {
+                print("Valid session exists")
+                print(session.id)
+                return session.id
+            } else {
+                print("No valid session")
+                return nil
+            }
+        } catch {
+            print("No Current Session exists, fatal error occurred")
+            return nil
+        }
+    }
+
+
+    
+//    var SessionUser = try await AuthServices.fetchSession()
+//    print(SessionUser)
+    
 
     func setSessionUser(with uuidString: UUID) {
         sessionUser = uuidString
     }
 
-    func getSessionUser() -> UUID? {
-        return sessionUser
-    }
+//    func getSessionUser() -> UUID? {
+//        return sessionUser
+//    }
 
     func clearSession() {
         sessionUser = nil

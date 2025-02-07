@@ -14,7 +14,7 @@ enum UserRole : Decodable {
 }
 
 // MARK: - User
-class User{
+class Users{
     let userID: String
     var username: String
     var name: String

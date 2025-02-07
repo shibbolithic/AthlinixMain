@@ -44,27 +44,24 @@ class StatsViewController: UIViewController, UITableViewDataSource, UITableViewD
     
 
     override func viewDidLoad() {
-         super.viewDidLoad()
+        super.viewDidLoad()
         
-           print("playerStackView: \(String(describing: playerStackView))")
-            playerStackView.dataSource = self
-            playerStackView.delegate = self
-            updateUI()
+        print("playerStackView: \(String(describing: playerStackView))")
+        playerStackView.dataSource = self
+        playerStackView.delegate = self
 
-            
-            if selectedGame != nil {
-                Task {
-                    await fetchInitialData()
-
-
-                }
-            } else {
-                print("No selected game passed!")
+        if selectedGame != nil {
+            Task {
+                await fetchInitialData()
+                updateUI()  // Move this inside to ensure data is available
             }
-        print("StatsViewController received game: \(String(describing: selectedGame))")
+        } else {
+            print("No selected game passed!")
+        }
         
+        print("StatsViewController received game: \(String(describing: selectedGame))")
+    }
 
-     }
 
      // MARK: - Fetch Data
      func fetchInitialData() async {
@@ -128,6 +125,7 @@ class StatsViewController: UIViewController, UITableViewDataSource, UITableViewD
          stats = calculateGameStats(gameID: selectedGame.gameID, team1ID: team1.teamID, team2ID: team2.teamID)
          selectedTeam = team1
          
+         playerStackView.reloadData()
          print("888")
      }
 
@@ -145,7 +143,10 @@ class StatsViewController: UIViewController, UITableViewDataSource, UITableViewD
                         playerLabel.isHidden = true
                         playerStackView.isHidden = false
                     default:
-                        break
+                        labelStackView.isHidden = false
+                        playerLabel.isHidden = false
+                        playerStackView.isHidden = false
+                        selectedTeam = sender.selectedSegmentIndex == 0 ? teams1.first { $0.teamID == selectedGame?.team1ID } : teams1.first { $0.teamID == selectedGame?.team2ID }
                     }
                     playerStackView.reloadData()
                 }
@@ -158,7 +159,7 @@ class StatsViewController: UIViewController, UITableViewDataSource, UITableViewD
                 case 2:
                     return stats.count
                 default:
-                    return 0
+                    return gameLogs.filter { $0.teamID == selectedTeam?.teamID && $0.gameID == selectedGame?.gameID }.count
                 }
     }
 
@@ -181,7 +182,12 @@ class StatsViewController: UIViewController, UITableViewDataSource, UITableViewD
                   cell.configureCategoryCell(with: stat.category, team1Value: stat.team1Value, team2Value: stat.team2Value)
                   cell.setPlayerView(hidden: true)
               default:
-                  fatalError("Unhandled segment index")
+                    let playerLogs = gameLogs.filter { $0.teamID == selectedTeam?.teamID && $0.gameID == selectedGame?.gameID }
+                    let playerLog = playerLogs[indexPath.row]
+                    let playerName = users.first { $0.userID == playerLog.playerID }?.name ?? "Unknown Player"
+                    cell.resetCell()
+                    cell.configure(with: playerLog, playerName: playerName)
+                    cell.setCategoryView(hidden: true)
               }
 
               return cell

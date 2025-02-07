@@ -159,9 +159,9 @@ class TeamPerformanceBarGamePlayChartView: UIView {
                 .filter { $0.playerID == memberID && $0.teamID == teamID }
                 .reduce(0) { $0 + $1.points2 + $1.points3 + $1.freeThrows }
             
-            if let user = users.first(where: { $0.userID == memberID }) {
-                teamPerformanceData.append((score: totalScore, image: user.profilePicture))
-            }
+//            if let user = users.first(where: { $0.userID == memberID }) {
+//                teamPerformanceData.append((score: totalScore, image: user.profilePicture))
+//            }
         }
         
         return teamPerformanceData

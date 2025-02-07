@@ -17,7 +17,62 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         guard let _ = (scene as? UIWindowScene) else { return }
+        checkAuthenticationStatus()
+        
+        
     }
+    
+    private func checkAuthenticationStatus() {
+                Task {
+                    do {
+                        if (try await AuthServices.shared.checkSession()) != nil {
+                            // Valid session exists, navigate to main app
+                            await MainActor.run {
+                                print("Valid session exists, navigate to main app")
+                                transitionToHomeScreen()
+                            }
+                        } else {
+                            // No valid session, show login screen
+                            await MainActor.run {
+                                print("No valid session")
+                                navigateToLogin()
+                            }
+                        }
+                    } catch {
+                        // Handle session error, show login screen
+                        await MainActor.run {
+                            navigateToLogin()
+                        }
+                    }
+                }
+            
+        func transitionToHomeScreen() {
+            guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene else {
+                    print("Error: Unable to get window scene")
+                    return
+                }
+                
+                let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                guard let tabBarController = storyboard.instantiateViewController(withIdentifier: "MainTabBarController") as? UITabBarController else {
+                    fatalError("MainTabBarController not found in storyboard")
+                }
+                
+                let newWindow = UIWindow(windowScene: windowScene)
+                newWindow.rootViewController = tabBarController
+                newWindow.makeKeyAndVisible()
+                window = newWindow
+            
+        }
+            
+            func navigateToLogin() {
+                let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                if let loginVC = storyboard.instantiateViewController(withIdentifier: "LoginViewController") as? LoginViewController {
+                    let navigationVC = UINavigationController(rootViewController: loginVC)
+                    window?.rootViewController = navigationVC
+                    window?.makeKeyAndVisible()
+                }
+            }
+        }
 
     func sceneDidDisconnect(_ scene: UIScene) {
         // Called as the scene is being released by the system.

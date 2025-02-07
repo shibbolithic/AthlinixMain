@@ -89,7 +89,7 @@ class GamePlayViewController: UIViewController {
     
     //MARK: FETCH PLAYERS
     private func fetchPlayerGameLogs() async {
-        guard let sessionUserID = SessionManager.shared.getSessionUser() else {
+        guard let sessionUserID = await SessionManager.shared.getSessionUser() else {
             print("Error: No session user is set")
             return
         }
