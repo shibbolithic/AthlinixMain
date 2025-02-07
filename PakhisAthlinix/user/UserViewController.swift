@@ -155,7 +155,7 @@ class UserViewController: UIViewController, UITableViewDelegate, UITableViewData
         // Set athlete-specific details if the user is an athlete
         if user11.role == .athlete, let athleteProfile = athleteProfile {
             position.text = athleteProfile.position
-            height.text = "\(athleteProfile.height) cm"
+            height.text = "\(athleteProfile.height) "
             weight.text = "\(athleteProfile.weight) kg"
             ppg.text = "\(athleteProfile.averagePointsPerGame)"
             bpg.text = "\(athleteProfile.averageReboundsPerGame)"

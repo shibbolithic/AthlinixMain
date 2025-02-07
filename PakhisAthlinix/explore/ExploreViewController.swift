@@ -14,6 +14,9 @@ class ExploreViewController: UIViewController, UITableViewDelegate, UITableViewD
 
     @IBOutlet weak var tableView: UITableView!
     
+    @IBOutlet weak var searchButton: UIBarButtonItem!
+    
+    
     var posts101 = [PostsTable]()
 
         override func viewDidLoad() {
@@ -131,4 +134,15 @@ class ExploreViewController: UIViewController, UITableViewDelegate, UITableViewD
         func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
             return 338
         }
+    
+    @IBAction func searchButtonTappedTwice(_ sender: Any) {
+        performSegue(withIdentifier: "goToSearchVC", sender: self)
+        print("search BUtton tapped")
+    }
+//    
+//    @IBAction func searchButtonTapped(_ sender: UIBarButtonItem) {
+//        performSegue(withIdentifier: "goToSearchVC", sender: self)
+//        print("search BUtton tapped")
+//    }
+    
     }

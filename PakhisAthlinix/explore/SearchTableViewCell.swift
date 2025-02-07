@@ -8,7 +8,12 @@
 import UIKit
 
 class SearchTableViewCell: UITableViewCell {
-
+    
+    
+    @IBOutlet weak var pfpImageView: UIImageView!
+    @IBOutlet weak var name: UILabel!
+    @IBOutlet weak var role: UILabel!
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
