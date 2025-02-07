@@ -3592,7 +3592,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="MfB-dJ-2BM">
-                                <rect key="frame" x="0.0" y="62" width="402" height="778"/>
+                                <rect key="frame" x="0.0" y="106" width="402" height="734"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="b3Z-9y-E7Y">
                                         <rect key="frame" x="0.0" y="0.0" width="402" height="1744"/>
@@ -3780,7 +3780,7 @@
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="100" id="zTy-u7-KS1"/>
                                                 </constraints>
-                                                <collectionViewFlowLayout key="collectionViewLayout" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="gHU-cj-gve">
+                                                <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="gHU-cj-gve">
                                                     <size key="itemSize" width="69" height="67"/>
                                                     <size key="headerReferenceSize" width="0.0" height="0.0"/>
                                                     <size key="footerReferenceSize" width="0.0" height="0.0"/>
@@ -3788,7 +3788,7 @@
                                                 </collectionViewFlowLayout>
                                                 <cells>
                                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="TeamCell" id="Zl9-ik-j9K" customClass="TeamCollectionViewCell" customModule="PakhisAthlinix" customModuleProvider="target">
-                                                        <rect key="frame" x="0.0" y="0.0" width="93" height="85"/>
+                                                        <rect key="frame" x="0.0" y="7.666666666666667" width="93" height="85"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                         <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="ilL-XF-tze">
                                                             <rect key="frame" x="0.0" y="0.0" width="93" height="85"/>
@@ -5071,7 +5071,7 @@ Account</string>
         <!--User-->
         <scene sceneID="Jkj-iT-4dn">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="aNi-OH-rZO" sceneMemberID="viewController">
+                <navigationController storyboardIdentifier="ViewUserNavigationController" automaticallyAdjustsScrollViewInsets="NO" id="aNi-OH-rZO" customClass="ViewUserNavigationController" customModule="PakhisAthlinix" customModuleProvider="target" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="User" image="person" catalog="system" id="bPE-ml-Aih"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="4Kh-Xg-q5M">

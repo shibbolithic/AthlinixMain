@@ -11,7 +11,6 @@ import SDWebImage
 
 
 class UserViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
-    //var loggedinuser = "2"
     
     @IBOutlet weak var backgroundPicture: UIImageView!
     

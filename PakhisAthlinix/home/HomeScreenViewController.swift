@@ -387,14 +387,12 @@ class HomeScreenViewController: UIViewController, UICollectionViewDelegate, UICo
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let selectedUser = users101[indexPath.row] // Get the selected user
-        let userID = selectedUser.userID // Assuming `userID` is a property of `Usertable`
+        let selectedAthlete = users101[indexPath.row] // Assume athletes array stores athlete data
 
-        // Navigate to the UserViewController
-        let storyboard = UIStoryboard(name: "Main", bundle: nil) // Replace "Main" with your storyboard name
-        if let userVC = storyboard.instantiateViewController(withIdentifier: "UserViewController") as? UserViewController {
-            userVC.user11 = selectedUser // Pass the selected user
-            self.navigationController?.pushViewController(userVC, animated: true)
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        if let profileVC = storyboard.instantiateViewController(withIdentifier: "ViewUserViewController") as? ViewUserViewController {
+            profileVC.selectedUserID = selectedAthlete.userID// Pass the UUID
+            navigationController?.pushViewController(profileVC, animated: true)
         }
     }
     
