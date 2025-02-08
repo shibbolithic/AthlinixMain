@@ -117,6 +117,20 @@ struct tempCoach: Codable, Equatable{
     var coach1ID: UUID
     var coach2ID: UUID
 }
+
+struct Player {
+    var name: String
+    var reb: Int // Rebounds
+    var ast: Int // Assists
+    var stl: Int // Steals
+    var foul: Int // Fouls
+    var pts: Int // Points
+}
+
+struct Team {
+    var name: String
+    var players: [Player]
+}
 //
 //
 //let heightRange = Array(140...220) // Height in cm

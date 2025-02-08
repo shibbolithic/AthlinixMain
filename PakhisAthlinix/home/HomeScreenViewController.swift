@@ -588,7 +588,7 @@ class HomeScreenViewController: UIViewController, UICollectionViewDelegate, UICo
     func createGame() {
         // Code for creating a game
         let storyboard = UIStoryboard(name: "Main", bundle: nil) // Replace "Main" with your storyboard name if different
-           if let addGameVC = storyboard.instantiateViewController(withIdentifier: "AddGameNavigationController") as? AddGameNavigationController {
+           if let addGameVC = storyboard.instantiateViewController(withIdentifier: "GameNavigationController") as? GameNavigationController {
                // Present the AddTeamViewController
                addGameVC.modalPresentationStyle = .fullScreen // or .overFullScreen if you want a different style
                self.present(addGameVC, animated: true, completion: nil)
