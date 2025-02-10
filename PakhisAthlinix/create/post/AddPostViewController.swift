@@ -84,25 +84,89 @@ class AddPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     }
     
     @IBAction func addPostButtonTapped(_ sender: UIButton) {
-        Task { @MainActor in
-            guard validateInputs() else {
-                print("Error: All required fields must be filled")
-                return
-            }
+            let activityIndicator = UIActivityIndicatorView(style: .large)
+            activityIndicator.center = view.center
+            view.addSubview(activityIndicator)
+            activityIndicator.startAnimating()
             
-            await savePostToSupabase()
+            Task { @MainActor in
+                guard validateInputs() else {
+                    activityIndicator.stopAnimating()
+                    showAlert(title: "Error", message: "Please fill all required fields.")
+                    return
+                }
+                
+                let uploadSuccess = await savePostToSupabase()
+                
+                activityIndicator.stopAnimating()
+                
+                if uploadSuccess {
+                    showAlert(title: "Success", message: "Post uploaded successfully!") {
+                        self.navigateToHome()
+                    }
+                } else {
+                    showAlert(title: "Error", message: "Failed to upload post. Please try again.")
+                }
+            }
         }
-        
-        let storyboard = UIStoryboard(name: "Main", bundle: nil) // Replace "Main" with your storyboard name if different
-           if let homeVC = storyboard.instantiateViewController(withIdentifier: "MainTabBarController") as? MainTabBarController {
-               // Present the AddTeamViewController
-               homeVC.modalPresentationStyle = .fullScreen // or .overFullScreen if you want a different style
-               self.present(homeVC, animated: true, completion: nil)
-           } else {
-               print("Could not instantiate AddPostViewController")
-           }
-    }
+
+        private func showAlert(title: String, message: String, completion: (() -> Void)? = nil) {
+            let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
+                completion?() // Navigate only on success
+            }))
+            present(alert, animated: true)
+        }
+
+        private func navigateToHome() {
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            if let homeVC = storyboard.instantiateViewController(withIdentifier: "MainTabBarController") as? MainTabBarController {
+                homeVC.modalPresentationStyle = .fullScreen
+                self.present(homeVC, animated: true, completion: nil)
+            }
+        }
+
+        private func savePostToSupabase() async -> Bool {
+            do {
+                let imagePaths = try await uploadImages(postID: UUID())
+                guard !imagePaths.isEmpty else { return false }
+                
+                let newPost = PostsTable(
+                    postID: UUID(),
+                    createdBy: await SessionManager.shared.getSessionUser()!,
+                    content: captionTextField.text ?? "",
+                    image1: imagePaths.first ?? "",
+                    image2: imagePaths.dropFirst().first ?? "",
+                    image3: imagePaths.dropFirst(2).first ?? "",
+                    linkedGameID: nil,
+                    likes: 0
+                )
+                
+                try await supabase.from("posts").insert(newPost).execute()
+                return true
+            } catch {
+                print("Error saving post: \(error)")
+                return false
+            }
+        }
     
+    private func showFailureAlert() {
+        let alert = UIAlertController(title: "Error", message: "Failed to upload post. Please try again.", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        present(alert, animated: true, completion: nil)
+    }
+
+//    private func navigateToHome() {
+//        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+//        if let homeVC = storyboard.instantiateViewController(withIdentifier: "MainTabBarController") as? MainTabBarController {
+//            homeVC.modalPresentationStyle = .fullScreen
+//            self.present(homeVC, animated: true, completion: nil)
+//        } else {
+//            print("Could not instantiate MainTabBarController")
+//        }
+//    }
+
+
     private func setupBackButton() {
         let backButton = UIBarButtonItem(title: "Back", style: .plain, target: self, action: #selector(backButtonTapped))
         navigationItem.leftBarButtonItem = backButton
@@ -140,46 +204,48 @@ class AddPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         return true
     }
     
-    private func savePostToSupabase() async {
-        guard let sessionUserID = await SessionManager.shared.getSessionUser() else {
-            print("Error: No session user is set")
-            return
-        }
-        
-        let postID = UUID() // Generate post UUID
-        
-        Task {
-            do {
-                let imagePaths = try await uploadImages(postID: postID)
-                print("Uploaded image paths: \(imagePaths)")
+//    private func savePostToSupabase() async -> Bool {
+//        guard let sessionUserID = await SessionManager.shared.getSessionUser() else {
+//            print("Error: No session user is set")
+//            return false
+//        }
+//        
+//        let postID = UUID() // Generate post UUID
+//        
+//        do {
+//            let imagePaths = try await uploadImages(postID: postID)
+//            print("Uploaded image paths: \(imagePaths)")
+//
+//            let newPost = PostsTable(
+//                postID: postID,
+//                createdBy: sessionUserID,
+//                content: captionTextField.text ?? "",
+//                image1: imagePaths.count > 0 ? imagePaths[0] : "",
+//                image2: imagePaths.count > 1 ? imagePaths[1] : "",
+//                image3: imagePaths.count > 2 ? imagePaths[2] : "",
+//                linkedGameID: nil,
+//                likes: 0
+//            )
+//            print("New post object created: \(newPost)")
+//
+//            try await supabase
+//                .from("posts")
+//                .insert(newPost)
+//                .execute()
+//            
+//            print("Post successfully added!")
+//            
+//            DispatchQueue.main.async {
+//                self.showSuccessAlert()
+//            }
+//            
+//            return true
+//        } catch {
+//            print("Error saving post: \(error)")
+//            return false
+//        }
+//    }
 
-                let newPost = PostsTable(
-                    postID: postID,
-                    createdBy: sessionUserID,
-                    content: captionTextField.text ?? "",
-                    image1: imagePaths.count > 0 ? imagePaths[0] : "",
-                    image2: imagePaths.count > 1 ? imagePaths[1] : "",
-                    image3: imagePaths.count > 2 ? imagePaths[2] : "",
-                    linkedGameID: nil,
-                    likes: 0
-                )
-                print("New post object created: \(newPost)")
-
-                try await supabase
-                    .from("posts")
-                    .insert(newPost)
-                    .execute()
-                
-                print("Post successfully added!")
-                DispatchQueue.main.async {
-                                self.showSuccessAlert()
-                            }
-            } catch {
-                print("Error saving post: \(error)")
-            }
-        }
-    }
-    
     private func showSuccessAlert() {
         let alert = UIAlertController(title: "Success", message: "Post added successfully!", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))

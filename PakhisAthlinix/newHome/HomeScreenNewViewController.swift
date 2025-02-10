@@ -56,6 +56,7 @@ class HomeScreenNewViewController: UIViewController, UICollectionViewDelegate, U
                 await fetchPlayerGameLogs()
 
             }
+        reloadInputViews()
         }
 
         override func viewDidLayoutSubviews() {
@@ -548,8 +549,9 @@ class HomeScreenNewViewController: UIViewController, UICollectionViewDelegate, U
                     guard self != nil else { return }
                     cell.configure(myTeamName: team1.teamName, opponentTeamName: team2.teamName, myTeamFieldGoals: "\(team1Logs.reduce(0) { $0 + $1.points2 })", myTeamThreePointFieldGoals: "\(team1Logs.reduce(0) { $0 + $1.points3 })", myTeamFreeThrows: "\(team1Logs.reduce(0) { $0 + $1.freeThrows })", opponentTeamFieldGoals: "\(team2Logs.reduce(0) { $0 + $1.points2 })", opponentTeamThreePointFieldGoals: "\(team2Logs.reduce(0) { $0 + $1.points3 })", opponentTeamFreeThrows: "\(team2Logs.reduce(0) { $0 + $1.freeThrows })")
 
-                    cell.myTeamImageView.image = UIImage(named: "myTeamLogo") // Ensure these images exist
-                    cell.opponentTeamImageView.image = UIImage(named: "opponentTeamLogo")
+                    cell.myTeamImageView.image = UIImage(named: team1.teamLogo!) // Ensure these images
+                    cell.opponentTeamImageView.image = UIImage(named: team2.teamLogo!)
+
                 }
             } catch {
                 print("Error updating best match view: \(error)")

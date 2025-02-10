@@ -326,7 +326,12 @@ class AddMemberDetailsViewController: UIViewController, UITableViewDelegate, UIT
         }
     
     @IBAction func saveButtonTapped(_ sender: UIButton) {
-        print("Team 1 Stats: \(team1.players)")
+            let activityIndicator = UIActivityIndicatorView(style: .large)
+            activityIndicator.center = self.view.center
+            self.view.addSubview(activityIndicator)
+            activityIndicator.startAnimating()
+
+            print("Team 1 Stats: \(team1.players)")
             print("Team 2 Stats: \(team2.players)")
             print("Team 1 Score: \(team1Score), Team 2 Score: \(team2Score)")
 
@@ -365,7 +370,7 @@ class AddMemberDetailsViewController: UIViewController, UITableViewDelegate, UIT
 
                     // Insert game logs for Team 1
                     for (index, player) in team1.players.enumerated() {
-                        if index < team1PlayerIDs.count { // Ensure matching ID exists
+                        if index < team1PlayerIDs.count {
                             let gameLog = GameLogtable(
                                 logID: UUID(),
                                 gameID: newGame.gameID,
@@ -387,7 +392,7 @@ class AddMemberDetailsViewController: UIViewController, UITableViewDelegate, UIT
 
                     // Insert game logs for Team 2
                     for (index, player) in team2.players.enumerated() {
-                        if index < team2PlayerIDs.count { // Ensure matching ID exists
+                        if index < team2PlayerIDs.count {
                             let gameLog = GameLogtable(
                                 logID: UUID(),
                                 gameID: newGame.gameID,
@@ -408,21 +413,53 @@ class AddMemberDetailsViewController: UIViewController, UITableViewDelegate, UIT
                     }
 
                     print("Game data successfully uploaded to Supabase.")
+                    
+                    // Stop activity indicator
+                    DispatchQueue.main.async {
+                        activityIndicator.stopAnimating()
+                        activityIndicator.removeFromSuperview()
+                        self.showAlert(success: true)
+                    }
+                    
                 } catch {
                     print("Error uploading game data to Supabase: \(error)")
+                    
+                    // Stop activity indicator
+                    DispatchQueue.main.async {
+                        activityIndicator.stopAnimating()
+                        activityIndicator.removeFromSuperview()
+                        self.showAlert(success: false)
+                    }
                 }
             }
-        
-        let storyboard = UIStoryboard(name: "Main", bundle: nil) // Replace "Main" with your storyboard name if different
-           if let homeVC = storyboard.instantiateViewController(withIdentifier: "MainTabBarController") as? MainTabBarController {
-               // Present the AddTeamViewController
-               homeVC.modalPresentationStyle = .fullScreen // or .overFullScreen if you want a different style
-               self.present(homeVC, animated: true, completion: nil)
-           } else {
-               print("Could not instantiate AddMember")
-           }
-        
         }
+
+        // Function to display an alert and navigate on success
+        func showAlert(success: Bool) {
+            let message = success ? "Game data successfully uploaded!" : "Failed to upload game data. Please try again."
+            let alert = UIAlertController(title: "Upload Status", message: message, preferredStyle: .alert)
+            
+            let action = UIAlertAction(title: "OK", style: .default) { _ in
+                if success {
+                    self.navigateToHome()
+                }
+            }
+            
+            alert.addAction(action)
+            self.present(alert, animated: true, completion: nil)
+        }
+
+        // Function to handle navigation
+        func navigateToHome() {
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            if let homeVC = storyboard.instantiateViewController(withIdentifier: "MainTabBarController") as? MainTabBarController {
+                homeVC.modalPresentationStyle = .fullScreen
+                self.present(homeVC, animated: true, completion: nil)
+            } else {
+                print("Could not instantiate MainTabBarController")
+            }
+        }
+
         
     
     

@@ -60,8 +60,24 @@ class StatsViewController: UIViewController, UITableViewDataSource, UITableViewD
         }
         
         print("StatsViewController received game: \(String(describing: selectedGame))")
-    }
+        
+        team1Logo.layer.cornerRadius = team1Logo.frame.size.width / 2
+        team1Logo.clipsToBounds = true
+        team2Logo.layer.cornerRadius = team2Logo.frame.size.width / 2
+        team2Logo.clipsToBounds = true
+        
+        // Add a bottom border
+        let bottomBorder = CALayer()
+        bottomBorder.backgroundColor = UIColor.lightGray.cgColor // Or any color you prefer
+        //bottomBorder.frame = CGRect(x: 0, y: HeaderStackOutlet.frame.height - 1, width:HeaderStackOutlet.frame.width, height: 1) // Adjust height as needed (1 for a thin line)
+        //HeaderStackOutlet.layer.addSublayer(bottomBorder)
 
+        // Ensure the sublayer is positioned correctly even with autolayout changes.  Important!
+        //HeaderStackOutlet.layer.masksToBounds = false // or HeaderStackOutlet.clipsToBounds = false
+
+        // Optional:  If you are using Auto Layout, you might need to update the bottom border's frame in layoutSubviews
+        
+    }
 
      // MARK: - Fetch Data
      func fetchInitialData() async {
