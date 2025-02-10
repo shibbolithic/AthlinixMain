@@ -25,6 +25,14 @@ class ProfilePostCell: UITableViewCell {
         super.awakeFromNib()
             profileImageView.layer.cornerRadius = profileImageView.frame.size.width / 2
             profileImageView.clipsToBounds = true
+        
+        imageView1.layer.cornerRadius = 10
+        imageView2.layer.cornerRadius = 10
+        imageView3.layer.cornerRadius = 10
+        
+        imageView1.clipsToBounds = true
+        imageView2.clipsToBounds = true
+        imageView3.clipsToBounds = true
         }
     
 }

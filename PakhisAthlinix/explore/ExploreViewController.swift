@@ -134,7 +134,6 @@ class ExploreViewController: UIViewController, UITableViewDelegate, UITableViewD
         func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
             return 338
         }
-    
     @IBAction func searchButtonTappedTwice(_ sender: Any) {
         performSegue(withIdentifier: "goToSearchVC", sender: self)
         print("search BUtton tapped")

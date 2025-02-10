@@ -35,6 +35,8 @@ class MatchHistoryViewController: UIViewController, UITableViewDataSource, UITab
                    print("Error fetching data: \(error)")
                }
            }
+        
+        setupBackButton()
        }
        
        // MARK: - Fetch Games, Teams, and Logs
@@ -190,4 +192,23 @@ class MatchHistoryViewController: UIViewController, UITableViewDataSource, UITab
         
         navigationController?.pushViewController(statsVC!, animated: true)
     }
+    
+    private func setupBackButton() {
+        let backButton = UIBarButtonItem(title: "Back", style: .plain, target: self, action: #selector(backButtonTapped))
+        navigationItem.leftBarButtonItem = backButton
+    }
+
+    // Back button action
+    @objc private func backButtonTapped() {
+        
+        let storyboard = UIStoryboard(name: "Main", bundle: nil) // Replace "Main" with your storyboard name if different
+           if let homeVC = storyboard.instantiateViewController(withIdentifier: "MainTabBarController") as? MainTabBarController {
+               // Present the AddTeamViewController
+               homeVC.modalPresentationStyle = .fullScreen // or .overFullScreen if you want a different style
+               self.present(homeVC, animated: true, completion: nil)
+           } else {
+               print("Could not instantiate AddPostViewController")
+           }
+    }
+
    }

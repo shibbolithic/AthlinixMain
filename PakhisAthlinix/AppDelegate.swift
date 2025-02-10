@@ -10,7 +10,7 @@ import Supabase
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
-    
+    //Thread 1: "Pushing a navigation controller is not supported"
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.

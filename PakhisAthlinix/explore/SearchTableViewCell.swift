@@ -17,6 +17,8 @@ class SearchTableViewCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
+        
+        pfpImageView.layer.cornerRadius = pfpImageView.frame.size.width / 2
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {

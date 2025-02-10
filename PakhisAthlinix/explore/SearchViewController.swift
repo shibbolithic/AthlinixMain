@@ -100,7 +100,7 @@ class SearchViewController: UIViewController {
        
    }
 
-   // MARK: - UISearchBarDelegateperfor
+   // MARK: - UISearchBarDelegate
    extension SearchViewController: UISearchBarDelegate {
        
        func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {

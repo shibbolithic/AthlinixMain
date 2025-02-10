@@ -23,6 +23,17 @@ class PostCell: UITableViewCell {
         super.awakeFromNib()
             profileImageView.layer.cornerRadius = profileImageView.frame.size.width / 2
             profileImageView.clipsToBounds = true
+            roundedCorners()
         }
+    
+    private func roundedCorners() {
+        imageView1.layer.cornerRadius = 12
+        imageView2.layer.cornerRadius = 12
+        imageView3.layer.cornerRadius = 12
+        
+        imageView1.clipsToBounds = true
+        imageView2.clipsToBounds = true
+        imageView3.clipsToBounds = true
+    }
 
 }
