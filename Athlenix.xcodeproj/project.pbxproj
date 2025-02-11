@@ -125,7 +125,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 34598B712D0CACE60011C7A6 /* Build configuration list for PBXProject "PakhisAthlinix" */;
+			buildConfigurationList = 34598B712D0CACE60011C7A6 /* Build configuration list for PBXProject "Athlenix" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -347,7 +347,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		34598B712D0CACE60011C7A6 /* Build configuration list for PBXProject "PakhisAthlinix" */ = {
+		34598B712D0CACE60011C7A6 /* Build configuration list for PBXProject "Athlenix" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				34598B8C2D0CACE70011C7A6 /* Debug */,

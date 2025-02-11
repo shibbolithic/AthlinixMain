@@ -7,7 +7,7 @@
 
 import Foundation
 
-let loggedInUserID = "1"
+//let loggedInUserID = "1"
 
 //var sessionuser: UUID? /* = UUID()*/ /*UUID(uuidString: "20e33a9c-9e8e-4113-b56a-2a04b96f6b53")!*/
 
