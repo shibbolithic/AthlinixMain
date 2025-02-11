@@ -105,6 +105,16 @@ class AddTeamViewController: UIViewController, UICollectionViewDelegate, UIColle
                 // Notify success and dismiss
                 showAlert(message: "Team created successfully!")
                 self.dismiss(animated: true)
+                
+                let storyboard = UIStoryboard(name: "Main", bundle: nil) // Replace "Main" with your storyboard name if different
+                   if let homeVC = storyboard.instantiateViewController(withIdentifier: "MainTabBarController") as? MainTabBarController {
+                       // Present the AddTeamViewController
+                       homeVC.modalPresentationStyle = .fullScreen // or .overFullScreen if you want a different style
+                       self.present(homeVC, animated: true, completion: nil)
+                   } else {
+                       print("Could not instantiate AddTeamViewController")
+                   }
+                
             } catch {
                 // Handle errors
                 showAlert(message: "Failed to create the team: \(error)")

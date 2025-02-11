@@ -50,7 +50,7 @@ class HomeScreenViewController: UIViewController, UICollectionViewDelegate, UICo
     
     //MARK: Variables
     var users101: [Usertable] = []
-
+    
     
     
     
@@ -77,10 +77,10 @@ class HomeScreenViewController: UIViewController, UICollectionViewDelegate, UICo
             view?.layer.cornerRadius = 8 // Optional: Rounded corners
             view?.clipsToBounds = true
         }
-       
+        
         // MARK: NEW
         // Fetch the best match data and update UI
-
+        
         Task {
             if let sessionUserID = await SessionManager.shared.getSessionUser() {
                 if let bestMatch1 = try await fetchBestMatchSupabase(forPlayerID: sessionUserID) {
@@ -93,26 +93,26 @@ class HomeScreenViewController: UIViewController, UICollectionViewDelegate, UICo
         
         
         // MARK: FLOATING BUTTON
-        let floatingButton = UIButton(type: .system)
-        floatingButton.frame = CGRect(x: view.frame.width - 30 - 70, y: view.frame.height - 120 - 70, width: 70, height: 70)
-        floatingButton.layer.cornerRadius = 35 // Half of width/height to make it circular
-        floatingButton.backgroundColor = UIColor(red: 253/255, green: 100/255, blue: 48/255, alpha: 1.0) // FD6430 color
-        floatingButton.setTitle("+", for: .normal)
-        floatingButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 30)
-        floatingButton.setTitleColor(.white, for: .normal)
-
-        // Add shadow for better visibility
-        floatingButton.layer.shadowColor = UIColor.black.cgColor
-        floatingButton.layer.shadowOpacity = 0.3
-        floatingButton.layer.shadowOffset = CGSize(width: 0, height: 2)
-        floatingButton.layer.shadowRadius = 4
-
-        // Add target action for the button
-        floatingButton.addTarget(self, action: #selector(floatingButtonTapped), for: .touchUpInside)
-
+        //        let floatingButton = UIButton(type: .system)
+        //        floatingButton.frame = CGRect(x: view.frame.width - 30 - 70, y: view.frame.height - 120 - 70, width: 70, height: 70)
+        //        floatingButton.layer.cornerRadius = 35 // Half of width/height to make it circular
+        //        floatingButton.backgroundColor = UIColor(red: 253/255, green: 100/255, blue: 48/255, alpha: 1.0) // FD6430 color
+        //        floatingButton.setTitle("+", for: .normal)
+        //        floatingButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 30)
+        //        floatingButton.setTitleColor(.white, for: .normal)
+        //
+        //        // Add shadow for better visibility
+        //        floatingButton.layer.shadowColor = UIColor.black.cgColor
+        //        floatingButton.layer.shadowOpacity = 0.3
+        //        floatingButton.layer.shadowOffset = CGSize(width: 0, height: 2)
+        //        floatingButton.layer.shadowRadius = 4
+        //
+        //        // Add target action for the button
+        //        floatingButton.addTarget(self, action: #selector(floatingButtonTapped), for: .touchUpInside)
+        
         // Add the button to the view
-        view.addSubview(floatingButton)
-
+        //        view.addSubview(floatingButton)
+        
         setupPointsScoredSection()
         // setupPinnedMatches()
         Task{
@@ -130,7 +130,7 @@ class HomeScreenViewController: UIViewController, UICollectionViewDelegate, UICo
         //setupMatchesPlayedvsPointsScoredSection()
         //setupMatchesPlayedvsPointsScoredSection()
     }
-
+    
     
     // MARK: - Setup Header
     private func setupHeader(forUserID userID: UUID) async {
@@ -139,7 +139,7 @@ class HomeScreenViewController: UIViewController, UICollectionViewDelegate, UICo
             let userResponse = try await supabase.from("User").select("*").eq("userID", value: userID).single().execute()
             let userDecoder = JSONDecoder()
             let fetchedUser = try userDecoder.decode(Usertable.self, from: userResponse.data)
-
+            
             // Fetch Athlete Profile data (if applicable)
             var fetchedAthleteProfile: AthleteProfileTable?
             if fetchedUser.role == .athlete {
@@ -147,26 +147,26 @@ class HomeScreenViewController: UIViewController, UICollectionViewDelegate, UICo
                 let athleteDecoder = JSONDecoder()
                 fetchedAthleteProfile = try athleteDecoder.decode(AthleteProfileTable.self, from: athleteResponse.data)
             }
-
+            
             // Ensure the user is an athlete and has a profile
             guard let athleteProfile = fetchedAthleteProfile else {
                 print("No athlete profile found.")
                 return
             }
-
+            
             // Configure the header view
             DispatchQueue.main.async {
                 self.headerView.layer.cornerRadius = 16
                 self.headerView.backgroundColor = UIColor(hex: "#FD6430")
                 self.profileImageView.layer.cornerRadius = self.profileImageView.frame.width / 2
                 self.profileImageView.clipsToBounds = true
-
+                
                 // Set data dynamically from `fetchedUser` and `athleteProfile`
                 self.userNameLabel.text = fetchedUser.name
                 self.ppgLabel.text = String(format: "%.1f", athleteProfile.averagePointsPerGame)
                 self.bpgLabel.text = String(format: "%.1f", athleteProfile.averageReboundsPerGame)
                 self.astLabel.text = String(format: "%.1f", athleteProfile.averageAssistsPerGame)
-
+                
                 // Set profile picture (ensure the image exists in your assets)
                 if let profilePicture = fetchedUser.profilePicture, let profileImage = UIImage(named: profilePicture) {
                     self.profileImageView.image = profileImage
@@ -178,7 +178,7 @@ class HomeScreenViewController: UIViewController, UICollectionViewDelegate, UICo
             print("Error setting up header data: \(error)")
         }
     }
-
+    
     
     // MARK: - Points Scored Section
     private func setupPointsScoredSection() {
@@ -241,7 +241,7 @@ class HomeScreenViewController: UIViewController, UICollectionViewDelegate, UICo
         
         return bestGame
     }
-
+    
     // MARK: - Update Best Match View with Supabase Data
     func updateBestMatchViewSupabase(with game: GameTable) async {
         do {
@@ -296,7 +296,7 @@ class HomeScreenViewController: UIViewController, UICollectionViewDelegate, UICo
             print("Error updating best match view: \(error)")
         }
     }
-
+    
     
     // MARK: - Highlight Section
     // Step 2: Filter posts to show only the logged-in user's posts
@@ -307,20 +307,20 @@ class HomeScreenViewController: UIViewController, UICollectionViewDelegate, UICo
             let postsDecoder = JSONDecoder()
             let userPosts = try postsDecoder.decode([PostsTable].self, from: postsResponse.data)
             print(userPosts)
-
+            
             // Ensure there's at least one post to display
             guard let post = userPosts.last else {
                 print("No posts available to display highlights.")
                 return
             }
-
+            
             // Configure the highlight card view
             highlightCardView.layer.cornerRadius = 12
             highlightCardView.layer.shadowColor = UIColor.black.cgColor
             highlightCardView.layer.shadowOpacity = 0.1
             highlightCardView.layer.shadowOffset = CGSize(width: 0, height: 4)
             highlightCardView.layer.shadowRadius = 8
-
+            
             // ✅ Load the highlight image from URL using SDWebImage
             if let imageUrl = URL(string: post.image3) {
                 highlightImageView.sd_setImage(with: imageUrl, placeholderImage: UIImage(named: "placeholder"))
@@ -329,21 +329,21 @@ class HomeScreenViewController: UIViewController, UICollectionViewDelegate, UICo
             }
             highlightImageView.layer.cornerRadius = 12
             highlightImageView.clipsToBounds = true
-
+            
             // Set other UI elements
             highlightGameName.text = post.content
-
+            
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "MMM '24"
             highlightDate.text = " " // Format date
-
+            
         } catch {
             print("Error fetching user posts: \(error)")
         }
     }
-
-
-
+    
+    
+    
     
     // MARK: - Athletes Collection View
     private func setupAthletesCollectionView() {
@@ -352,25 +352,25 @@ class HomeScreenViewController: UIViewController, UICollectionViewDelegate, UICo
     }
     
     private func fetchAthletesData() {
-           Task {
-               do {
-                   let response = try await supabase.from("User").select("*").eq("role", value: Role.athlete.rawValue).execute()
-                   let decoder = JSONDecoder()
-                   users101 = try decoder.decode([Usertable].self, from: response.data)
-                   
-                   // Update local data source
-                   //user101 = fetchedUsers
-                   
-                   // Reload the collection view on the main thread
-                   DispatchQueue.main.async {
-                       self.athletesCollectionView.reloadData()
-                   }
-               } catch {
-                   print("Error fetching athletes: \(error)")
-               }
-           }
-       }
-       
+        Task {
+            do {
+                let response = try await supabase.from("User").select("*").eq("role", value: Role.athlete.rawValue).execute()
+                let decoder = JSONDecoder()
+                users101 = try decoder.decode([Usertable].self, from: response.data)
+                
+                // Update local data source
+                //user101 = fetchedUsers
+                
+                // Reload the collection view on the main thread
+                DispatchQueue.main.async {
+                    self.athletesCollectionView.reloadData()
+                }
+            } catch {
+                print("Error fetching athletes: \(error)")
+            }
+        }
+    }
+    
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return users101.count
@@ -378,17 +378,17 @@ class HomeScreenViewController: UIViewController, UICollectionViewDelegate, UICo
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "AthletesCell", for: indexPath) as! athletesCollectionViewCell
-            let user = users101[indexPath.row]  // Fetch the user at the given index
-            
-         
-            cell.configure(with: user)  // Assuming your cell has a configure method that accepts a `User`
-            
-            return cell
+        let user = users101[indexPath.row]  // Fetch the user at the given index
+        
+        
+        cell.configure(with: user)  // Assuming your cell has a configure method that accepts a `User`
+        
+        return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let selectedAthlete = users101[indexPath.row] // Assume athletes array stores athlete data
-
+        
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         if let profileVC = storyboard.instantiateViewController(withIdentifier: "ViewUserViewController") as? ViewUserViewController {
             profileVC.selectedUserID = selectedAthlete.userID// Pass the UUID
@@ -495,15 +495,15 @@ class HomeScreenViewController: UIViewController, UICollectionViewDelegate, UICo
             print("Error fetching data for points scored graph: \(error)")
         }
     }
-
-
+    
+    
     
     // MARK: additional funcs
-
-//    @IBAction func navigateToHierarchy(_ sender: UIButton) {
-//        performSegue(withIdentifier: "goToNavigation", sender: nil)
-//        
-//    }
+    
+    //    @IBAction func navigateToHierarchy(_ sender: UIButton) {
+    //        performSegue(withIdentifier: "goToNavigation", sender: nil)
+    //
+    //    }
     
     @IBAction func navigateTogameplay(_ sender: UIButton) {
         performSegue(withIdentifier: "gotogameplay", sender: nil)
@@ -511,40 +511,40 @@ class HomeScreenViewController: UIViewController, UICollectionViewDelegate, UICo
     }
     
     
-    @objc func floatingButtonTapped() {
-        // Create an action sheet
-        let actionSheet = UIAlertController(title: "Select an Option", message: nil, preferredStyle: .actionSheet)
-        
-        // Create "Create Post" action
-        let createPostAction = UIAlertAction(title: "Create Post", style: .default) { _ in
-            // Handle Create Post action
-            self.createPost()
-        }
-        
-        // Create "Create Team" action
-        let createTeamAction = UIAlertAction(title: "Create Team", style: .default) { _ in
-            // Handle Create Team action
-            self.createTeam()
-        }
-        
-        // Create "Create Game" action
-        let createGameAction = UIAlertAction(title: "Create Game", style: .default) { _ in
-            // Handle Create Game action
-            self.createGame()
-        }
-        
+    //    @objc func floatingButtonTapped() {
+    //        // Create an action sheet
+    //        let actionSheet = UIAlertController(title: "Select an Option", message: nil, preferredStyle: .actionSheet)
+    //
+    //        // Create "Create Post" action
+    //        let createPostAction = UIAlertAction(title: "Create Post", style: .default) { _ in
+    //            // Handle Create Post action
+    //            self.createPost()
+    //        }
+    //
+    //        // Create "Create Team" action
+    //        let createTeamAction = UIAlertAction(title: "Create Team", style: .default) { _ in
+    //            // Handle Create Team action
+    //            self.createTeam()
+    //        }
+    //
+    //        // Create "Create Game" action
+    //        let createGameAction = UIAlertAction(title: "Create Game", style: .default) { _ in
+    //            // Handle Create Game action
+    //            self.createGame()
+    //        }
+
         // Add actions to the action sheet
-        actionSheet.addAction(createPostAction)
-        actionSheet.addAction(createTeamAction)
-        actionSheet.addAction(createGameAction)
+//        actionSheet.addAction(createPostAction)
+//        actionSheet.addAction(createTeamAction)
+//        actionSheet.addAction(createGameAction)
         
         // Add a cancel button
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
-        actionSheet.addAction(cancelAction)
-        
-        // Present the action sheet
-        present(actionSheet, animated: true, completion: nil)
-    }
+//        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+//        actionSheet.addAction(cancelAction)
+//        
+//        // Present the action sheet
+//        present(actionSheet, animated: true, completion: nil)
+//    }
 
     // MARK: Create
     func createPost() {

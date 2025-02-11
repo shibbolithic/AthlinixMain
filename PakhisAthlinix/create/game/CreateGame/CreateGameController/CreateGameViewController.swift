@@ -28,7 +28,10 @@ class CreateGameViewController: UIViewController{
     var selectedOppoTeam: TeamTable?
     var opponentTeam: TeamTable?
     var opponentMembers: [TeamMembershipTable] = []
+    
     var allUsers: [Usertable] = []
+    
+    var allMembers: [Usertable] = []
     
     
     
@@ -39,7 +42,11 @@ class CreateGameViewController: UIViewController{
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        fetchTeams()
+        Task{
+            await fetchTeams()
+        }
+        //fetchTeams()
+        
         setupCollectionViews()
         setupUI()
         setupBackButton()
@@ -164,29 +171,51 @@ class CreateGameViewController: UIViewController{
         present(alert, animated: true)
     }
     
-    
-    private func fetchTeams() {
+    //MARK: FETCH TEAMS
+
+    private func fetchTeams() async {
+        guard let userID =  await SessionManager.shared.getSessionUser()  else {
+            print("User ID is nil")
+            return
+        }
+        
         Task {
             do {
-                let response: [TeamTable] = try await supabase
-                    .from("teams")
-                    .select()
+                // Fetch team memberships for the current user
+                let membershipsResponse = try await supabase
+                    .from("teamMembership")
+                    .select("*")
+                    .eq("userID", value: userID.uuidString)
                     .execute()
-                    .value
                 
+                let decoder = JSONDecoder()
+                let memberships = try decoder.decode([TeamMembershipTable].self, from: membershipsResponse.data)
+                
+                // Extract teamIDs from memberships
+                let teamIDs = memberships.map { $0.teamID.uuidString }
+                
+                // Fetch teams matching the teamIDs
+                let teamsResponse = try await supabase
+                    .from("teams")
+                    .select("*")
+                    .in("teamID", values: teamIDs)
+                    .execute()
+                
+                let teams = try decoder.decode([TeamTable].self, from: teamsResponse.data)
+                
+                // Update the teams array and reload the collection view
                 Task { @MainActor in
-                    print("Success Data fetched Successfully")
-                    self.teams = response
+                    print("Success: Data fetched successfully")
+                    self.teams = teams
                     self.yourTeamCollectionView.reloadData()
                 }
                 
             } catch {
                 print("Failed to fetch teams: \(error.localizedDescription)")
             }
-            
         }
     }
-    //MARK: FETCH TEAMS
+
     private func fetchTeamMembers(for teamID: UUID) {
         Task {
             do {
@@ -206,10 +235,11 @@ class CreateGameViewController: UIViewController{
                 print(userIDs)
                 
                 fetchMemberProfiles(for: userIDs) // Fetch all user profiles at once
-                
+                //fetchOpponentMembers(for: userIDs)
                 // Reload UI on the main thread
                 DispatchQueue.main.async {
                     self.yourTeamMembersCollectionView.reloadData()
+                    //self.opponentTeamMembersCollectionView.reloadData()
                 }
             } catch {
                 print("Error fetching team members: \(error.localizedDescription)")
@@ -233,63 +263,68 @@ class CreateGameViewController: UIViewController{
                 let decoder = JSONDecoder()
                 
                 allUsers = try decoder.decode([Usertable].self, from: response.data)
+                //allMembers = try decoder.decode([Usertable].self, from: response.data)
                 
                 print(allUsers)
                 
                 // Reload UI on the main thread
                 DispatchQueue.main.async {
                     self.yourTeamMembersCollectionView.reloadData()
+                    //self.opponentTeamMembersCollectionView.reloadData()
                 }
             } catch {
                 print("Error fetching member profiles: \(error.localizedDescription)")
             }
         }
     }
-
-    
-//    private func fetchSingleMemberProfile(for userID: UUID) {
-//        Task {
-//            do {
-//                let response: [Usertable] = try await supabase
-//                    .from("AthleteProfile")
-//                    .select()
-//                    .eq("athleteID", value: userID.uuidString)  // Fetch one user
-//                    .execute()
-//                    .value
-//                
-//                print("Single Member Profile: \(response)")
-//            } catch {
-//                print("Failed to fetch a single profile: \(error.localizedDescription)")
-//            }
-//        }
-//    }
-
-
     
     private func fetchOpponentMembers(for teamID: UUID) {
+            Task {
+                do {
+                    let response = try await supabase
+                        .from("teamMembership")
+                        .select("*")
+                        .eq("teamID", value: teamID)
+                        .execute()
+
+                    let decoder = JSONDecoder()
+                    let opponentMembers = try decoder.decode([TeamMembershipTable].self, from: response.data)
+                    
+                    self.opponentMembers = opponentMembers
+                    
+                    let opponentUserIDs = opponentMembers.map { $0.userID }
+                    fetchOpponentMemberProfiles(for: opponentUserIDs) // Fetch opponent user profiles
+                    
+                    DispatchQueue.main.async {
+                        self.opponentTeamMembersCollectionView.reloadData()
+                    }
+                } catch {
+                    print("Failed to fetch opponent team members: \(error.localizedDescription)")
+                }
+            }
+        }
+    
+    private func fetchOpponentMemberProfiles(for userIDs: [UUID]) {
         Task {
             do {
                 let response = try await supabase
-                    .from("teamMembership")
+                    .from("User")
                     .select("*")
-                    .eq("teamID", value: teamID)
+                    .in("userID", values: userIDs)
                     .execute()
-
+                
                 let decoder = JSONDecoder()
-                members = try decoder.decode([TeamMembershipTable].self, from: response.data)
-                
-                self.opponentMembers = members
-                
-                print("Opponent Team Members: \(response)")
+                self.allMembers = try decoder.decode([Usertable].self, from: response.data)
                 
                 DispatchQueue.main.async {
                     self.opponentTeamMembersCollectionView.reloadData()
                 }
             } catch {
-                print("Failed to fetch opponent team members: \(error.localizedDescription)")
+                print("Error fetching opponent member profiles: \(error.localizedDescription)")
             }
         }
     }
+    
 }
 
 extension CreateGameViewController: InviteDelegate {
@@ -338,8 +373,8 @@ extension CreateGameViewController: UICollectionViewDelegate, UICollectionViewDa
             
         case opponentTeamMembersCollectionView:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: opponentCellId, for: indexPath) as! OpponentTeamMemberCellCollectionViewCell
-            let member = opponentMembers[indexPath.row]
-            cell.configure(with: member, users: allUsers)
+            //let member = opponentMembers[indexPath.row]
+            cell.configure101(with: opponentMembers[indexPath.row], users: allMembers)
             return cell
             
         default:

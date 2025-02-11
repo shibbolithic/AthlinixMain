@@ -9,6 +9,10 @@ import UIKit
 import Storage
 import SDWebImage
 
+extension Notification.Name {
+    static let profileUpdated = Notification.Name("profileUpdated")
+}
+
 
 class UserViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
@@ -64,6 +68,9 @@ class UserViewController: UIViewController, UITableViewDelegate, UITableViewData
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        NotificationCenter.default.addObserver(self, selector: #selector(reloadUserData), name: NSNotification.Name("profileUpdated"), object: nil)
+
+        
         //        if let sessionUserID = await SessionManager.shared.getSessionUser() {
         //        }
         
@@ -74,6 +81,7 @@ class UserViewController: UIViewController, UITableViewDelegate, UITableViewData
                     await fetchTeamsForUserSupabase(userID: sessionUserID)
                     await setupProfileDetailsSupabase()
                     await fetchPosts()
+                    await reloadUserData()
                     
                     if let bestMatch = try await fetchBestMatchSupabase(forPlayerID: sessionUserID) {
                         await updateBestGameViewSupabase(with: bestMatch)
@@ -89,16 +97,26 @@ class UserViewController: UIViewController, UITableViewDelegate, UITableViewData
             }
         }
         
+        
         //fetchBestMatchSupabase(forPlayerID: sessionuser)
         // Set delegates and data sources
         teamCollectionView.delegate = self
         teamCollectionView.dataSource = self
         tableView.delegate = self
         tableView.dataSource = self
+        reloadInputViews()
     }
     
     //MARK: Editing Features
-    
+    @objc private func reloadUserData() {
+        print("updating...")
+        Task {
+            await self.setupProfileDetailsSupabase()
+//                    reloadUserData()// Re-fetch updated user profile data
+                }
+            
+        }
+        
     // MARK: - Fetch Data from Supabase
     func setupPrimaryDataSupabase(forUserID userID: UUID) async {
         do {
@@ -522,6 +540,17 @@ class UserViewController: UIViewController, UITableViewDelegate, UITableViewData
         
         return cell
     }
+    
+    @IBAction func settingsButton(_ sender: UIButton) {
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        if let UserVC = storyboard.instantiateViewController(withIdentifier: "EditProfileNavViewController") as? EditProfileNavViewController {
+            UserVC.modalPresentationStyle = .fullScreen
+            self.present(UserVC, animated: true, completion: nil)
+        } else {
+            print("Could not instantiate EditProfileNavViewController")
+        }
+    }
+    
 }
 // MARK: - UICollectionView
 extension UserViewController: UICollectionViewDelegate, UICollectionViewDataSource {

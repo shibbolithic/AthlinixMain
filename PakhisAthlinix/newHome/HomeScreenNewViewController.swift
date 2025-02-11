@@ -12,52 +12,53 @@ class HomeScreenNewViewController: UIViewController, UICollectionViewDelegate, U
     
     // Mark: Outlets
     @IBOutlet weak var BestMatchCollectionView: UICollectionView!
-        @IBOutlet weak var CreationCollectionView: UICollectionView!
-        @IBOutlet weak var StatsCardLeft: UIView!
-        @IBOutlet weak var StatsCardRight: UIView!
-        @IBOutlet weak var CustomHeaderCard: UIView!
-        @IBOutlet weak var profileImageView: UIImageView!
-        @IBOutlet weak var userNameLabel: UILabel!
-        @IBOutlet weak var ppgLabel: UILabel!
-        @IBOutlet weak var bpgLabel: UILabel!
-        @IBOutlet weak var pointsScoredImageView: UIView!
-        @IBOutlet weak var seeAnalyticsButton: UIButton!
-        @IBOutlet weak var pointsScoredBarGraphView: UIView!
-        @IBOutlet weak var pinnedMatchesView: UIView!
-        @IBOutlet weak var pinnedMatchesCardView: UIView!
-        @IBOutlet weak var athletesCollectionView: UICollectionView!
-        @IBOutlet weak var matchesPlayedvsPointsScoredView: UIView!
-        @IBOutlet weak var teamgraphview: TeamPerformanceBarChartViewClass!
+    @IBOutlet weak var CreationCollectionView: UICollectionView!
+    @IBOutlet weak var StatsCardLeft: UIView!
+    @IBOutlet weak var StatsCardRight: UIView!
+    @IBOutlet weak var CustomHeaderCard: UIView!
+    @IBOutlet weak var profileImageView: UIImageView!
+    @IBOutlet weak var userNameLabel: UILabel!
+    @IBOutlet weak var ppgLabel: UILabel!
+    @IBOutlet weak var bpgLabel: UILabel!
+    @IBOutlet weak var pointsScoredImageView: UIView!
+    @IBOutlet weak var seeAnalyticsButton: UIButton!
+    @IBOutlet weak var pointsScoredBarGraphView: UIView!
+    @IBOutlet weak var pinnedMatchesView: UIView!
+    @IBOutlet weak var pinnedMatchesCardView: UIView!
+    @IBOutlet weak var athletesCollectionView: UICollectionView!
+    @IBOutlet weak var matchesPlayedvsPointsScoredView: UIView!
+    @IBOutlet weak var teamgraphview: TeamPerformanceBarChartViewClass!
     
     
     // MARK: - Variables
-
-        var users101: [Usertable] = []
-        private var gradientLayer: CAGradientLayer?
+    
+    var users101: [Usertable] = []
+    private var gradientLayer: CAGradientLayer?
     
     // MARK: - Lifecycle
     
     override func viewDidLoad() {
-            super.viewDidLoad()
-            setupView()
-            setupCollectionViews()
-            setupHeaderGradient()
-            styleSectionViews()
-            setupPointsScoredSection()
-            fetchAthletesData()
-        
-        
+        super.viewDidLoad()
         Task {
-                if let sessionUserID = await SessionManager.shared.getSessionUser() {
-                    await setupHeader(forUserID: sessionUserID)
-                } else {
-                    print("Warning: No session user available when viewDidLoad, header might not load.")
-                }
-                await fetchPlayerGameLogs()
-
+            if let sessionUserID = await SessionManager.shared.getSessionUser() {
+                await setupHeader(forUserID: sessionUserID)
+            } else {
+                print("Warning: No session user available when viewDidLoad, header might not load.")
             }
-        reloadInputViews()
+            await fetchPlayerGameLogs()
+            
         }
+        
+        reloadInputViews()
+    setupView()
+    setupCollectionViews()
+    setupHeaderGradient()
+    styleSectionViews()
+    setupPointsScoredSection()
+    fetchAthletesData()
+    
+}
+        
 
         override func viewDidLayoutSubviews() {
             super.viewDidLayoutSubviews()
@@ -382,26 +383,26 @@ class HomeScreenNewViewController: UIViewController, UICollectionViewDelegate, U
 
         // MARK: - Floating Button Action
 
-        @objc func floatingButtonTapped() {
-            presentCreationActionSheet()
-        }
-
-        private func presentCreationActionSheet() {
-            let actionSheet = UIAlertController(title: "Select an Option", message: nil, preferredStyle: .actionSheet)
-
-            actionSheet.addAction(UIAlertAction(title: "Create Post", style: .default) { [weak self] _ in
-                self?.createPost()
-            })
-            actionSheet.addAction(UIAlertAction(title: "Create Team", style: .default) { [weak self] _ in
-                self?.createTeam()
-            })
-            actionSheet.addAction(UIAlertAction(title: "Create Game", style: .default) { [weak self] _ in
-                self?.createGame()
-            })
-            actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-
-            present(actionSheet, animated: true)
-        }
+//        @objc func floatingButtonTapped() {
+//            presentCreationActionSheet()
+//        }
+//
+//        private func presentCreationActionSheet() {
+//            let actionSheet = UIAlertController(title: "Select an Option", message: nil, preferredStyle: .actionSheet)
+//
+//            actionSheet.addAction(UIAlertAction(title: "Create Post", style: .default) { [weak self] _ in
+//                self?.createPost()
+//            })
+//            actionSheet.addAction(UIAlertAction(title: "Create Team", style: .default) { [weak self] _ in
+//                self?.createTeam()
+//            })
+//            actionSheet.addAction(UIAlertAction(title: "Create Game", style: .default) { [weak self] _ in
+//                self?.createGame()
+//            })
+//            actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+//
+//            present(actionSheet, animated: true)
+//        }
 
 
         // MARK: - Creation Actions
@@ -754,12 +755,29 @@ class HomeScreenNewViewController: UIViewController, UICollectionViewDelegate, U
                 //self.assistsToTurnoverLabel.text = assistsToTurnoverRatio
                 
                 // MARK: Graphs
+                
+                guard playerGameLogs.count >= 2 else {
+                    print("Not enough games played to show graph (requires at least 2 games)")
+                    return
+                }
                 let pointsData = playerGameLogs.map { CGFloat($0.points2 + $0.points3 + $0.freeThrows) }
+                print("Data Points: \(pointsData)")
+
+                if (playerGameLogs.count >= 2) && !pointsData.contains(where: { $0.isNaN }) {
+                            self.drawLineGraph(in: self.pointsScoredImageView, dataPoints: pointsData)
+                        } else {
+                            print("Skipping graph drawing as there are no valid data points.")
+                        }
+                }
                 //let reboundsData = playerGameLogs.map { CGFloat($0.rebounds) }
                 
-                self.drawLineGraph(in: self.pointsScoredImageView, dataPoints: pointsData)
+//                if !pointsData.isEmpty && !pointsData.contains(where: { $0.isNaN }) {
+//                        self.drawLineGraph(in: self.pointsScoredImageView, dataPoints: pointsData)
+//                    } else {
+//                        print("Skipping graph drawing as there are no valid data points.")
+//                    }
                 //self.drawLineGraph(in: self.reboundsIncreaseLinceGraphView, dataPoints: reboundsData)
-            }
+            
         } catch {
             print("Error fetching player game logs: \(error)")
         }

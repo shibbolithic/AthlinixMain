@@ -44,6 +44,12 @@ class MatchHistoryViewController: UIViewController, UITableViewDataSource, UITab
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
 
+        // Get session user ID
+        guard let sessionUserID = await SessionManager.shared.getSessionUser() else {
+            print("Error: No session user is set")
+            return
+        }
+
         // Fetch all game logs
         let gameLogsResponse = try await supabase
             .from("GameLog")
@@ -51,12 +57,21 @@ class MatchHistoryViewController: UIViewController, UITableViewDataSource, UITab
             .execute()
         gameLogs = try decoder.decode([GameLogtable].self, from: gameLogsResponse.data)
 
+        // Filter game logs to only those where the session user has played
+        let userGameLogs = gameLogs.filter { $0.playerID == sessionUserID }
+
+        // Extract game IDs from the filtered logs
+        let userGameIDs = Set(userGameLogs.map { $0.gameID })
+
         // Fetch games
         let gamesResponse = try await supabase
             .from("Game")
             .select("*")
             .execute()
-        games = try decoder.decode([GameTable].self, from: gamesResponse.data)
+        let allGames = try decoder.decode([GameTable].self, from: gamesResponse.data)
+
+        // Filter games to only those played by the session user
+        games = allGames.filter { userGameIDs.contains($0.gameID) }
 
         // Fetch teams
         let teamsResponse = try await supabase
@@ -64,7 +79,15 @@ class MatchHistoryViewController: UIViewController, UITableViewDataSource, UITab
             .select("*")
             .execute()
         teams = try decoder.decode([TeamTable].self, from: teamsResponse.data)
+
+        // Update filteredGames to reflect the session user's matches
+        filteredGames = games
+
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
     }
+
 
 
        

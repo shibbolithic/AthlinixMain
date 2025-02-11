@@ -34,6 +34,15 @@ class SessionManager {
             return nil
         }
     }
+    
+    func logoutUser() async {
+        do {
+            try await AuthServices.shared.signOut() // Replace with actual logout method
+            print("User logged out successfully")
+        } catch {
+            print("Error logging out: \(error)")
+        }
+    }
 
 
     

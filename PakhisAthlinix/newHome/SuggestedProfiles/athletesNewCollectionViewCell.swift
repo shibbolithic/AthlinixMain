@@ -19,6 +19,7 @@ class athletesNewCollectionViewCell: UICollectionViewCell {
         // Initialization code
         ProfileCardOutlet.layer.cornerRadius = 16
         ProfileCardOutlet.clipsToBounds = true
+        ProfileCardOutlet.contentMode = .scaleAspectFit
     }
     
     func configure(with user: Usertable) {

@@ -44,7 +44,7 @@ struct AthleteProfileTable : Codable, Equatable{
     let athleteID : UUID
     let height : Float
     let weight: Float
-    let experience: Int8
+    let experience: Int
     let position: positions
     let averagePointsPerGame: Float
     let averageReboundsPerGame: Float
@@ -125,12 +125,26 @@ struct Player {
     var stl: Int // Steals
     var foul: Int // Fouls
     var pts: Int // Points
+    var points3: Int
+    var freeThrows: Int
+    var missed2Points: Int
+    var missed3Points: Int
+    var totalPoints: Int {
+        return pts * 2 + points3 * 3
+    }
 }
 
 struct Team {
     var name: String
     var players: [Player]
 }
+
+//struct AthleteProfileUpdate: Encodable {
+//    var position: Int?  // Change this to Int if Supabase expects an Int
+//    var height: Int?
+//    var weight: Int?
+//}
+
 //
 //
 //let heightRange = Array(140...220) // Height in cm

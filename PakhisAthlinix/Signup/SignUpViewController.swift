@@ -53,13 +53,13 @@ class SignUpViewController: UIViewController {
                     
                     // Creating user data to store in Supabase
                     let userData = Usertable(
-                        userID: UUID(),
+                        userID: signUpResult.id,
                         createdAt: currentDate,
                         username: email.components(separatedBy: "@").first ?? "unknown",
                         name: name,
                         email: email,
                         password: password,  // Consider hashing passwords before storing
-                        profilePicture: nil,
+                        profilePicture: "person.circle",
                         coverPicture: nil,
                         bio: nil,
                         dateJoined: currentDate,
@@ -73,14 +73,26 @@ class SignUpViewController: UIViewController {
                         .insert(userData)
                         .execute()
                     
+                    let athleteData = AthleteProfileTable(athleteID: signUpResult.id, height: 0, weight: 0, experience: 0, position: .center, averagePointsPerGame: 0, averageReboundsPerGame: 0, averageAssistsPerGame: 0)
+                    
+                    let response1 = try await supabase
+                        .from("AthleteProfile")
+                        .insert(athleteData)
+                        .execute()
+                    print("Insert status: \(response1.status)")
+
+                    
                     print("Insert status: \(response.status)")
                     
                     await MainActor.run {
                         hideLoadingIndicator()
+                        transitionToHomeScreen()
                         showAlert(title: "Signup Success", message: "You have successfully Registered to Athlinix")
-                        performSegue(withIdentifier: "NavigateToLogin", sender: nil)
+                        //performSegue(withIdentifier: "NavigateToLogin", sender: nil)
                         
                     }
+                    
+                    
                 } catch {
                     await MainActor.run {
                         hideLoadingIndicator()
@@ -89,6 +101,15 @@ class SignUpViewController: UIViewController {
                 }
             }
         }
+        
+    private func transitionToHomeScreen() {
+        guard let tabBarController = storyboard?.instantiateViewController(withIdentifier: "MainTabBarController") else {
+            fatalError("MainTabBarController not found in storyboard")
+        }
+        tabBarController.modalPresentationStyle = .fullScreen
+        present(tabBarController, animated: true, completion: nil)
+    }
+    
 
     @IBAction func handleRegisterWithGoogle(_ sender: Any) {
     }

@@ -104,19 +104,19 @@ class AddMemberDetailsViewController: UIViewController, UITableViewDelegate, UIT
     var team2Score = 0
     
     var team1 = Team(name: "Lakers", players: [
-        Player(name: "Player 1", reb: 0, ast: 0, stl: 0, foul: 0, pts: 0),
-        Player(name: "Player 2", reb: 0, ast: 0, stl: 0, foul: 0, pts: 0),
-        Player(name: "Player 3", reb: 0, ast: 0, stl: 0, foul: 0, pts: 0),
-        Player(name: "Player 4", reb: 0, ast: 0, stl: 0, foul: 0, pts: 0),
-        Player(name: "Player 5", reb: 0, ast: 0, stl: 0, foul: 0, pts: 0)
+        Player(name: "Player 1", reb: 0, ast: 0, stl: 0, foul: 0, pts: 0, points3: 0, freeThrows: 0, missed2Points: 0, missed3Points: 0),
+        Player(name: "Player 2", reb: 0, ast: 0, stl: 0, foul: 0, pts: 0, points3: 0, freeThrows: 0, missed2Points: 0, missed3Points: 0),
+        Player(name: "Player 3", reb: 0, ast: 0, stl: 0, foul: 0, pts: 0, points3: 0, freeThrows: 0, missed2Points: 0, missed3Points: 0),
+        Player(name: "Player 4", reb: 0, ast: 0, stl: 0, foul: 0, pts: 0, points3: 0, freeThrows: 0, missed2Points: 0, missed3Points: 0),
+        Player(name: "Player 5", reb: 0, ast: 0, stl: 0, foul: 0, pts: 0, points3: 0, freeThrows: 0, missed2Points: 0, missed3Points: 0)
     ])
     
     var team2 = Team(name: "Raptors", players: [
-        Player(name: "Player 1", reb: 0, ast: 0, stl: 0, foul: 0, pts: 0),
-        Player(name: "Player 2", reb: 0, ast: 0, stl: 0, foul: 0, pts: 0),
-        Player(name: "Player 3", reb: 0, ast: 0, stl: 0, foul: 0, pts: 0),
-        Player(name: "Player 4", reb: 0, ast: 0, stl: 0, foul: 0, pts: 0),
-        Player(name: "Player 5", reb: 0, ast: 0, stl: 0, foul: 0, pts: 0)
+        Player(name: "Player 1", reb: 0, ast: 0, stl: 0, foul: 0, pts: 0, points3: 0, freeThrows: 0, missed2Points: 0, missed3Points: 0),
+        Player(name: "Player 2", reb: 0, ast: 0, stl: 0, foul: 0, pts: 0, points3: 0, freeThrows: 0, missed2Points: 0, missed3Points: 0),
+        Player(name: "Player 3", reb: 0, ast: 0, stl: 0, foul: 0, pts: 0, points3: 0, freeThrows: 0, missed2Points: 0, missed3Points: 0),
+        Player(name: "Player 4", reb: 0, ast: 0, stl: 0, foul: 0, pts: 0, points3: 0, freeThrows: 0, missed2Points: 0, missed3Points: 0),
+        Player(name: "Player 5", reb: 0, ast: 0, stl: 0, foul: 0, pts: 0, points3: 0, freeThrows: 0, missed2Points: 0, missed3Points: 0)
     ])
     
     var selectedAction: String?
@@ -257,7 +257,7 @@ class AddMemberDetailsViewController: UIViewController, UITableViewDelegate, UIT
     private func mapMembersToPlayers(_ members: [TeamMembershipTable]) -> [Player] {
         return members.map { member in
             let playerName = userNames[member.userID] ?? "Unknown Player"
-            return Player(name: playerName, reb: 0, ast: 0, stl: 0, foul: 0, pts: 0)
+            return Player(name: playerName, reb: 0, ast: 0, stl: 0, foul: 0, pts: 0, points3: 0, freeThrows: 0, missed2Points: 0, missed3Points: 0)
         }
     }
 
@@ -280,27 +280,21 @@ class AddMemberDetailsViewController: UIViewController, UITableViewDelegate, UIT
         team1score.text = "\(team1Score)"
         team2score.text = "\(team2Score)"
         
-        if let logoName = yourTeam?.teamLogo, let teamImage = UIImage(named: logoName) {
-            teamLogo1.image = teamImage
-        } else {
-            teamLogo1.image = UIImage(named: "default_team_logo") // Provide a fallback image
-        }        //teamLogo1.image = UIImage(named: "team1") // Replace with your actual image names
-        //teamLogo2.image = UIImage(named: "team2")
-        if let logoName2 = yourTeam?.teamLogo, let teamImage2 = UIImage(named: logoName2) {
-            teamLogo2.image = teamImage2
-        } else {
-            teamLogo2.image = UIImage(named: "default_team_logo") // Provide a fallback image
-        }
+        teamLogo1.image = UIImage(named: (yourTeam?.teamLogo!)!)
+        teamLogo2.image = UIImage(named: (opponentTeam?.teamLogo!)!)
+        
+//        if let logoName = yourTeam?.teamLogo, let teamImage = UIImage(named: logoName) {
+//            teamLogo1.image = teamImage
+//        } else {
+//            teamLogo1.image = UIImage(named: "default_team_logo") // Provide a fallback image
+//        }        //teamLogo1.image = UIImage(named: "team1") // Replace with your actual image names
+//        //teamLogo2.image = UIImage(named: "team2")
+//        if let logoName2 = yourTeam?.teamLogo, let teamImage2 = UIImage(named: logoName2) {
+//            teamLogo2.image = teamImage2
+//        } else {
+//            teamLogo2.image = UIImage(named: "default_team_logo") // Provide a fallback image
+//        }
         //teamLogo2.image = UIImage(named: (opponentTeam?.teamLogo!)!)
-
-        
-        
-//        if let yourTeamLogo = yourTeam?.teamLogoURL {
-//                teamLogo1.loadImage(from: yourTeamLogo)
-//            }
-//            if let opponentTeamLogo = opponentTeam?.teamLogoURL {
-//                teamLogo2.loadImage(from: opponentTeamLogo)
-//            }
     }
     
     
@@ -330,11 +324,11 @@ class AddMemberDetailsViewController: UIViewController, UITableViewDelegate, UIT
             activityIndicator.center = self.view.center
             self.view.addSubview(activityIndicator)
             activityIndicator.startAnimating()
-
+            
             print("Team 1 Stats: \(team1.players)")
             print("Team 2 Stats: \(team2.players)")
             print("Team 1 Score: \(team1Score), Team 2 Score: \(team2Score)")
-
+            
             let newGame = GameTable(
                 gameID: UUID(),
                 team1ID: yourTeam?.teamID ?? UUID(),
@@ -344,12 +338,12 @@ class AddMemberDetailsViewController: UIViewController, UITableViewDelegate, UIT
                 team1finalScore: team1Score,
                 team2finalScore: team2Score
             )
-
+            
             Task {
                 do {
                     // Insert the new game into the GameTable
                     try await supabase.from("Game").insert(newGame).execute()
-
+                    
                     // Fetch player IDs for both teams
                     let team1Members: [TeamMembershipTable] = try await supabase
                         .from("teamMembership")
@@ -357,64 +351,67 @@ class AddMemberDetailsViewController: UIViewController, UITableViewDelegate, UIT
                         .eq("teamID", value: newGame.team1ID)
                         .execute()
                         .value
-
+                    
                     let team2Members: [TeamMembershipTable] = try await supabase
                         .from("teamMembership")
                         .select()
                         .eq("teamID", value: newGame.team2ID)
                         .execute()
                         .value
-
+                    
                     let team1PlayerIDs = team1Members.map { $0.userID }
                     let team2PlayerIDs = team2Members.map { $0.userID }
-
-                    // Insert game logs for Team 1
+                    
+                    // Insert game logs and update player stats
                     for (index, player) in team1.players.enumerated() {
                         if index < team1PlayerIDs.count {
+                            let playerID = team1PlayerIDs[index]
                             let gameLog = GameLogtable(
                                 logID: UUID(),
                                 gameID: newGame.gameID,
                                 teamID: newGame.team1ID,
-                                playerID: team1PlayerIDs[index],
-                                points2: player.pts / 2,
-                                points3: 0,
-                                freeThrows: 0,
+                                playerID: playerID,
+                                points2: player.pts,
+                                points3: player.points3,
+                                freeThrows: player.freeThrows,
                                 rebounds: player.reb,
                                 assists: player.ast,
                                 steals: player.stl,
                                 fouls: player.foul,
-                                missed2Points: 0,
-                                missed3Points: 0
+                                missed2Points: player.missed2Points,
+                                missed3Points: player.missed3Points
                             )
                             try await supabase.from("GameLog").insert(gameLog).execute()
+                            try await updatePlayerStats(playerID: playerID, newPoints: gameLog.totalPoints, newRebounds: player.reb, newAssists: player.ast)
                         }
                     }
-
-                    // Insert game logs for Team 2
+                    
                     for (index, player) in team2.players.enumerated() {
                         if index < team2PlayerIDs.count {
+                            let playerID = team2PlayerIDs[index]
                             let gameLog = GameLogtable(
                                 logID: UUID(),
                                 gameID: newGame.gameID,
                                 teamID: newGame.team2ID,
-                                playerID: team2PlayerIDs[index],
-                                points2: player.pts / 2,
-                                points3: 0,
-                                freeThrows: 0,
+                                playerID: playerID,
+                                points2: player.pts,
+                                points3: player.points3,
+                                freeThrows: player.freeThrows,
                                 rebounds: player.reb,
                                 assists: player.ast,
                                 steals: player.stl,
                                 fouls: player.foul,
-                                missed2Points: 0,
-                                missed3Points: 0
+                                missed2Points: player.missed2Points,
+                                missed3Points: player.missed3Points
                             )
                             try await supabase.from("GameLog").insert(gameLog).execute()
+                            
+                            try await updatePlayerStats(playerID: playerID, newPoints: gameLog.totalPoints, newRebounds: player.reb, newAssists: player.ast)
                         }
                     }
-
+                    
                     print("Game data successfully uploaded to Supabase.")
                     
-                    // Stop activity indicator
                     DispatchQueue.main.async {
                         activityIndicator.stopAnimating()
                         activityIndicator.removeFromSuperview()
@@ -424,7 +421,6 @@ class AddMemberDetailsViewController: UIViewController, UITableViewDelegate, UIT
                 } catch {
                     print("Error uploading game data to Supabase: \(error)")
                     
-                    // Stop activity indicator
                     DispatchQueue.main.async {
                         activityIndicator.stopAnimating()
                         activityIndicator.removeFromSuperview()
@@ -433,8 +429,9 @@ class AddMemberDetailsViewController: UIViewController, UITableViewDelegate, UIT
                 }
             }
         }
+    
 
-        // Function to display an alert and navigate on success
+        //MARK:   Function to display an alert and navigate on success
         func showAlert(success: Bool) {
             let message = success ? "Game data successfully uploaded!" : "Failed to upload game data. Please try again."
             let alert = UIAlertController(title: "Upload Status", message: message, preferredStyle: .alert)
@@ -569,6 +566,8 @@ class AddMemberDetailsViewController: UIViewController, UITableViewDelegate, UIT
                     updateTeamScore(for: team, points: 3)
                 case "REBOUND":
                     player.reb += 1
+                    print("Rebound updated for player: \(player.name), new rebounds: \(player.reb)")
+                    
                 case "ASSIST":
                     player.ast += 1
                 case "STEAL":
@@ -608,6 +607,61 @@ class AddMemberDetailsViewController: UIViewController, UITableViewDelegate, UIT
                 self?.animateScoreUpdate(for: team, points: points)
             }
         }
+    
+    func updatePlayerStats(playerID: UUID, newPoints: Int, newRebounds: Int, newAssists: Int) async throws {
+        do {
+            // Fetch player's current stats
+            let playerStats: [AthleteProfileTable] = try await supabase
+                .from("AthleteProfile")
+                .select()
+                .eq("athleteID", value: playerID)
+                .execute()
+                .value
+
+            guard var currentStats = playerStats.first else { return }
+
+            // Calculate total games played by fetching existing game logs
+            let previousGameLogs: [GameLogtable] = try await supabase
+                .from("GameLog")
+                .select()
+                .eq("playerID", value: playerID)
+                .execute()
+                .value
+
+            let previousGamesCount = previousGameLogs.count
+
+            // Compute new averages
+            let updatedAvgPoints = ((currentStats.averagePointsPerGame * Float(previousGamesCount)) + Float(newPoints)) / Float(previousGamesCount + 1)
+            let updatedAvgRebounds = ((currentStats.averageReboundsPerGame * Float(previousGamesCount)) + Float(newRebounds)) / Float(previousGamesCount + 1)
+            let updatedAvgAssists = ((currentStats.averageAssistsPerGame * Float(previousGamesCount)) + Float(newAssists)) / Float(previousGamesCount + 1)
+            
+            print(")))))))))(((((((")
+            
+            print(currentStats.averageReboundsPerGame)
+            
+            print(newRebounds)
+            
+            print(updatedAvgRebounds)
+            
+            print(")))))))))(((((((")
+
+            // Update player's average stats
+            try await supabase.from("AthleteProfile")
+                .update([
+                    "averagePointsPerGame": updatedAvgPoints,
+                    "averageReboundsPerGame": updatedAvgRebounds,
+                    "averageAssistsPerGame": updatedAvgAssists
+                ])
+                .eq("athleteID", value: playerID)
+                .execute()
+
+            print("Updated player stats for playerID: \(playerID)")
+
+        } catch {
+            print("Error updating player stats: \(error)")
+        }
+    }
+
 
 
     

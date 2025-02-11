@@ -8,6 +8,7 @@
 import UIKit
 
 class OpponentTeamMemberCellCollectionViewCell: UICollectionViewCell {
+    
     @IBOutlet weak var NameOutlet: UILabel!
     @IBOutlet weak var UsernameOutlet: UILabel!
     @IBOutlet weak var ProfilePicOutlet: UIImageView!
@@ -16,30 +17,22 @@ class OpponentTeamMemberCellCollectionViewCell: UICollectionViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         
-        ProfilePicOutlet.layer.cornerRadius = ProfilePicOutlet.frame.height / 2
+        setupUI()
         // Initialization code
     }
     
-    func configure(with member: TeamMembershipTable, users: [Usertable]) {
+    func setupUI() {
+        ProfilePicOutlet.layer.cornerRadius = 10
+        ProfilePicOutlet.clipsToBounds = true
+    }
+    
+    func configure101(with member: TeamMembershipTable, users: [Usertable]) {
         if let user = users.first(where: { $0.userID == member.userID }) {
             
             NameOutlet.text = user.name
             UsernameOutlet.text = user.username
             ProfilePicOutlet.image = UIImage(named: user.profilePicture!)
-            
-//            if let profilePictureURL = user.profilePicture, let url = URL(string: profilePictureURL) {
-//                // Load image asynchronously
-//                DispatchQueue.global().async {
-//                    if let data = try? Data(contentsOf: url) {
-//                        DispatchQueue.main.async {
-//                            self.MemberAvatarOutlet.image = UIImage(data: data)
-//                        }
-//                    }
-//                }
-//            } else {
-//                // Set a placeholder image if no profile picture
-//                self.MemberAvatarOutlet.image = UIImage(named: "defaultAvatar")
-//            }
+
         } else {
             NameOutlet.text = "Unknown"
             UsernameOutlet.text = ""
@@ -54,3 +47,19 @@ class OpponentTeamMemberCellCollectionViewCell: UICollectionViewCell {
 //        }
 
 }
+
+//MARK: URL
+
+//            if let profilePictureURL = user.profilePicture, let url = URL(string: profilePictureURL) {
+//                // Load image asynchronously
+//                DispatchQueue.global().async {
+//                    if let data = try? Data(contentsOf: url) {
+//                        DispatchQueue.main.async {
+//                            self.MemberAvatarOutlet.image = UIImage(data: data)
+//                        }
+//                    }
+//                }
+//            } else {
+//                // Set a placeholder image if no profile picture
+//                self.MemberAvatarOutlet.image = UIImage(named: "defaultAvatar")
+//            }
