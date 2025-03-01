@@ -110,7 +110,8 @@ class GamePlayViewController: UIViewController {
             
             // MARK: Calculate metrics
             let totalPoints = playerGameLogs.reduce(0) { $0 + ($1.points2 + $1.points3 + $1.freeThrows) }
-            let gamesPlayed = playerGameLogs.count
+            //MARK: CODED
+            let gamesPlayed = playerGameLogs.count - 1
             let pointsPerGameValue = Double(totalPoints) / Double(gamesPlayed)
             
             let firstGamePoints = playerGameLogs.first.map { $0.points2 + $0.points3 + $0.freeThrows } ?? 0

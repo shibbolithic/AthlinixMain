@@ -418,6 +418,13 @@ extension CreateGameViewController: UICollectionViewDelegate, UICollectionViewDa
         
         let storyboard = UIStoryboard(name: "Main", bundle: nil) // Replace "Main" with your storyboard name if different
            if let homeVC = storyboard.instantiateViewController(withIdentifier: "MainTabBarController") as? MainTabBarController {
+               
+               let transition = CATransition()
+                      transition.duration = 0.3
+                      transition.type = .push
+                      transition.subtype = .fromLeft  // This makes it slide in from the left
+                      view.window?.layer.add(transition, forKey: kCATransition)
+               
                // Present the AddTeamViewController
                homeVC.modalPresentationStyle = .fullScreen // or .overFullScreen if you want a different style
                self.present(homeVC, animated: true, completion: nil)

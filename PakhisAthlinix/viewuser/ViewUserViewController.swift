@@ -64,7 +64,14 @@ class ViewUserViewController: UIViewController, UITableViewDelegate, UITableView
     //MARK: VIEWDIDLOAD
     override func viewDidLoad() {
             super.viewDidLoad()
-
+        
+        
+        bestGameOpponentTeamLogo.layer.cornerRadius = bestGameOpponentTeamLogo.frame.height / 2
+        bestGameOpponentTeamLogo.clipsToBounds = true
+        
+        bestGameMyTeamLogo.layer.cornerRadius = bestGameMyTeamLogo.frame.height / 2
+        bestGameMyTeamLogo.clipsToBounds = true
+        
             teamCollectionView.delegate = self
             teamCollectionView.dataSource = self
             tableView.delegate = self
@@ -153,9 +160,14 @@ class ViewUserViewController: UIViewController, UITableViewDelegate, UITableView
             position.text = athleteProfile.position
             height.text = "\(athleteProfile.height) cm"
             weight.text = "\(athleteProfile.weight) kg"
-            ppg.text = "\(athleteProfile.averagePointsPerGame)"
-            bpg.text = "\(athleteProfile.averageReboundsPerGame)"
-            ast.text = "\(athleteProfile.averageAssistsPerGame)"
+//            ppg.text = "\(athleteProfile.averagePointsPerGame)"
+//            bpg.text = "\(athleteProfile.averageReboundsPerGame)"
+//            ast.text = "\(athleteProfile.averageAssistsPerGame)"
+            
+            ppg.text = String(format: "%.2f", athleteProfile.averagePointsPerGame)
+            bpg.text = String(format: "%.2f", athleteProfile.averageReboundsPerGame)
+            ast.text = String(format: "%.2f", athleteProfile.averageAssistsPerGame)
+
             
             // Calculate and display the number of games played
             if let sessionUserID = await SessionManager.shared.getSessionUser() {

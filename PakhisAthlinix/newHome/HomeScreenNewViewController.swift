@@ -29,6 +29,8 @@ class HomeScreenNewViewController: UIViewController, UICollectionViewDelegate, U
     @IBOutlet weak var matchesPlayedvsPointsScoredView: UIView!
     @IBOutlet weak var teamgraphview: TeamPerformanceBarChartViewClass!
     
+    //@IBOutlet weak var statusLabel: UILabel!
+    
     
     // MARK: - Variables
     
@@ -143,6 +145,16 @@ class HomeScreenNewViewController: UIViewController, UICollectionViewDelegate, U
                 print("Could not instantiate AddPostViewController")
             }
         }
+//    private func navigateToMatchHistory1() {
+//        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+//        
+//        if let matchHistoryVC = storyboard.instantiateViewController(withIdentifier: "MatchHistroyViewController") as? MatchHistroyViewController {
+//            self.navigationController?.pushViewController(matchHistoryVC, animated: true)
+//        } else {
+//            print("Could not instantiate MatchHistoryViewController")
+//        }
+//    }
+
 
         @IBAction func navigateTogameplay(_ sender: UIButton) {
             performSegue(withIdentifier: "gotogameplay", sender: nil)
@@ -416,6 +428,11 @@ class HomeScreenNewViewController: UIViewController, UICollectionViewDelegate, U
         
         let storyboard = UIStoryboard(name: "Main", bundle: nil) // Replace "Main" with your storyboard name if different
            if let createPostVC = storyboard.instantiateViewController(withIdentifier: "PostCreationNavigationController") as? PostCreationNavigationController {
+               let transition = CATransition()
+                      transition.duration = 0.3
+                      transition.type = .push
+               transition.subtype = .fromRight  // This makes it slide in from the left
+                      view.window?.layer.add(transition, forKey: kCATransition)
                // Present the AddTeamViewController
                createPostVC.modalPresentationStyle = .fullScreen // or .overFullScreen if you want a different style
                self.present(createPostVC, animated: true, completion: nil)
@@ -431,6 +448,11 @@ class HomeScreenNewViewController: UIViewController, UICollectionViewDelegate, U
         // Code for creating a team
         let storyboard = UIStoryboard(name: "Main", bundle: nil) // Replace "Main" with your storyboard name if different
            if let addTeamVC = storyboard.instantiateViewController(withIdentifier: "TeamNavigationController") as? TeamNavigationController {
+               let transition = CATransition()
+                      transition.duration = 0.3
+                      transition.type = .push
+                      transition.subtype = .fromRight  // This makes it slide in from the left
+                      view.window?.layer.add(transition, forKey: kCATransition)
                // Present the AddTeamViewController
                addTeamVC.modalPresentationStyle = .fullScreen // or .overFullScreen if you want a different style
                self.present(addTeamVC, animated: true, completion: nil)
@@ -444,6 +466,11 @@ class HomeScreenNewViewController: UIViewController, UICollectionViewDelegate, U
     func createGame() {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         if let gameNavController = storyboard.instantiateViewController(withIdentifier: "GameNavigationController") as? UINavigationController {
+            let transition = CATransition()
+                   transition.duration = 0.3
+                   transition.type = .push
+                   transition.subtype = .fromRight  // This makes it slide in from the left
+                   view.window?.layer.add(transition, forKey: kCATransition)
             gameNavController.modalPresentationStyle = .fullScreen // Presentation style is already set because GameNavigationController is a UINavigationController
             self.present(gameNavController, animated: true)
         } else {

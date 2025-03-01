@@ -33,21 +33,26 @@ class ExploreViewController: UIViewController, UITableViewDelegate, UITableViewD
         }
 
         // Function to fetch posts from Supabase
-        func fetchPosts() async {
-            do {
-                // Fetch posts from Supabase
-                let postsResponse = try await supabase.from("posts").select("*").execute()
-                let postsDecoder = JSONDecoder()
-                posts101 = try postsDecoder.decode([PostsTable].self, from: postsResponse.data)
-                
-                // Reload the table view with fetched data
-                DispatchQueue.main.async {
-                    self.tableView.reloadData()
-                }
-            } catch {
-                print("Error fetching posts: \(error)")
+    func fetchPosts() async {
+        do {
+            // Fetch posts ordered by createdAt in descending order (newest first)
+            let postsResponse = try await supabase.from("posts")
+                .select("*")
+                .order("createdAt", ascending: false)
+                .execute()
+
+            let postsDecoder = JSONDecoder()
+            posts101 = try postsDecoder.decode([PostsTable].self, from: postsResponse.data)
+
+            // Reload the table view with fetched data
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
             }
+        } catch {
+            print("Error fetching posts: \(error)")
         }
+    }
+
 
         func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
             return posts101.count

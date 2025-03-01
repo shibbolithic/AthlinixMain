@@ -69,6 +69,13 @@ class UserViewController: UIViewController, UITableViewDelegate, UITableViewData
         super.viewDidLoad()
         
         NotificationCenter.default.addObserver(self, selector: #selector(reloadUserData), name: NSNotification.Name("profileUpdated"), object: nil)
+        
+        bestGameOpponentTeamLogo.layer.cornerRadius = bestGameOpponentTeamLogo.frame.height / 2
+        bestGameOpponentTeamLogo.clipsToBounds = true
+        
+        bestGameMyTeamLogo.layer.cornerRadius = bestGameMyTeamLogo.frame.height / 2
+        bestGameMyTeamLogo.clipsToBounds = true
+        
 
         
         //        if let sessionUserID = await SessionManager.shared.getSessionUser() {
@@ -170,14 +177,21 @@ class UserViewController: UIViewController, UITableViewDelegate, UITableViewData
         profilePicture.image = UIImage(named: user11.profilePicture ?? "")
         backgroundPicture.image = UIImage(named: user11.coverPicture ?? "")
         
+        
+        
         // Set athlete-specific details if the user is an athlete
         if user11.role == .athlete, let athleteProfile = athleteProfile {
             position.text = athleteProfile.position
-            height.text = "\(athleteProfile.height) "
+            height.text = "\(athleteProfile.height) cm"
             weight.text = "\(athleteProfile.weight) kg"
-            ppg.text = "\(athleteProfile.averagePointsPerGame)"
-            bpg.text = "\(athleteProfile.averageReboundsPerGame)"
-            ast.text = "\(athleteProfile.averageAssistsPerGame)"
+//            ppg.text = "\(athleteProfile.averagePointsPerGame)"
+//            bpg.text = "\(athleteProfile.averageReboundsPerGame)"
+//            ast.text = "\(athleteProfile.averageAssistsPerGame)"
+            
+            ppg.text = String(format: "%.2f", athleteProfile.averagePointsPerGame)
+            bpg.text = String(format: "%.2f", athleteProfile.averageReboundsPerGame)
+            ast.text = String(format: "%.2f", athleteProfile.averageAssistsPerGame)
+
             
             // Calculate and display the number of games played
             if let sessionUserID = await SessionManager.shared.getSessionUser() {
@@ -544,6 +558,13 @@ class UserViewController: UIViewController, UITableViewDelegate, UITableViewData
     @IBAction func settingsButton(_ sender: UIButton) {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         if let UserVC = storyboard.instantiateViewController(withIdentifier: "EditProfileNavViewController") as? EditProfileNavViewController {
+            
+            let transition = CATransition()
+                   transition.duration = 0.3
+                   transition.type = .push
+            transition.subtype = .fromRight  // This makes it slide in from the left
+                   view.window?.layer.add(transition, forKey: kCATransition)
+            
             UserVC.modalPresentationStyle = .fullScreen
             self.present(UserVC, animated: true, completion: nil)
         } else {

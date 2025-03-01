@@ -37,6 +37,8 @@ class MatchHistoryViewController: UIViewController, UITableViewDataSource, UITab
            }
         
         setupBackButton()
+        
+        
        }
        
        // MARK: - Fetch Games, Teams, and Logs
@@ -223,15 +225,19 @@ class MatchHistoryViewController: UIViewController, UITableViewDataSource, UITab
 
     // Back button action
     @objc private func backButtonTapped() {
-        
-        let storyboard = UIStoryboard(name: "Main", bundle: nil) // Replace "Main" with your storyboard name if different
-           if let homeVC = storyboard.instantiateViewController(withIdentifier: "MainTabBarController") as? MainTabBarController {
-               // Present the AddTeamViewController
-               homeVC.modalPresentationStyle = .fullScreen // or .overFullScreen if you want a different style
-               self.present(homeVC, animated: true, completion: nil)
-           } else {
-               print("Could not instantiate AddPostViewController")
-           }
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        if let homeVC = storyboard.instantiateViewController(withIdentifier: "MainTabBarController") as? MainTabBarController {
+            let transition = CATransition()
+            transition.duration = 0.3
+            transition.type = .push
+            transition.subtype = .fromLeft  // This makes it slide in from the left
+            view.window?.layer.add(transition, forKey: kCATransition)
+            
+            homeVC.modalPresentationStyle = .fullScreen
+            self.present(homeVC, animated: false, completion: nil)  // animated should be false to avoid conflicts
+        } else {
+            print("Could not instantiate MainTabBarController")
+        }
     }
 
    }

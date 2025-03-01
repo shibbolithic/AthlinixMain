@@ -58,12 +58,21 @@ class SettingsViewController: UIViewController {
     @IBAction func BackButton(_ sender: UIButton) {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         if let UserVC = storyboard.instantiateViewController(withIdentifier: "MainTabBarController") as? MainTabBarController {
+            
+            let transition = CATransition()
+                   transition.duration = 0.3
+                   transition.type = .push
+                   transition.subtype = .fromLeft  // This makes it slide in from the left
+                   view.window?.layer.add(transition, forKey: kCATransition)
+            
             UserVC.modalPresentationStyle = .fullScreen
             self.present(UserVC, animated: true, completion: nil)
         } else {
             print("Could not instantiate EditProfileNavViewController")
         }
     }
+    
+    
     
 }
     

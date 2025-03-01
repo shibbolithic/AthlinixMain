@@ -54,6 +54,13 @@ class AddTeamViewController: UIViewController, UICollectionViewDelegate, UIColle
         
         let storyboard = UIStoryboard(name: "Main", bundle: nil) // Replace "Main" with your storyboard name if different
            if let homeVC = storyboard.instantiateViewController(withIdentifier: "MainTabBarController") as? MainTabBarController {
+               
+               let transition = CATransition()
+                      transition.duration = 0.3
+                      transition.type = .push
+                      transition.subtype = .fromLeft  // This makes it slide in from the left
+                      view.window?.layer.add(transition, forKey: kCATransition)
+               
                // Present the AddTeamViewController
                homeVC.modalPresentationStyle = .fullScreen // or .overFullScreen if you want a different style
                self.present(homeVC, animated: true, completion: nil)
@@ -103,17 +110,21 @@ class AddTeamViewController: UIViewController, UICollectionViewDelegate, UIColle
                 try await insertTeamMemberships(teamID: newTeamID, users: selectedMembers, role: .athlete)
 
                 // Notify success and dismiss
-                showAlert(message: "Team created successfully!")
-                self.dismiss(animated: true)
-                
-                let storyboard = UIStoryboard(name: "Main", bundle: nil) // Replace "Main" with your storyboard name if different
-                   if let homeVC = storyboard.instantiateViewController(withIdentifier: "MainTabBarController") as? MainTabBarController {
-                       // Present the AddTeamViewController
-                       homeVC.modalPresentationStyle = .fullScreen // or .overFullScreen if you want a different style
-                       self.present(homeVC, animated: true, completion: nil)
-                   } else {
-                       print("Could not instantiate AddTeamViewController")
-                   }
+                showAlert1(message: "Team created successfully!") { [weak self] in
+                    guard let self = self else { return }
+                    
+                    // Dismiss the current modal first
+                    self.presentingViewController?.dismiss(animated: true) {
+                        // Navigate to MainTabBarController
+                        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                        if let homeVC = storyboard.instantiateViewController(withIdentifier: "MainTabBarController") as? MainTabBarController {
+                            homeVC.modalPresentationStyle = .fullScreen
+                            UIApplication.shared.keyWindow?.rootViewController = homeVC
+                        } else {
+                            print("Could not instantiate MainTabBarController")
+                        }
+                    }
+                }
                 
             } catch {
                 // Handle errors
@@ -149,6 +160,15 @@ class AddTeamViewController: UIViewController, UICollectionViewDelegate, UIColle
            alert.addAction(UIAlertAction(title: "OK", style: .default))
            self.present(alert, animated: true)
        }
+    
+    func showAlert1(message: String, completion: (() -> Void)? = nil) {
+        let alert = UIAlertController(title: "Notice", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default) { _ in
+            completion?()
+        })
+        present(alert, animated: true)
+    }
+
     
     
     // MARK: - Athletes Collection View
