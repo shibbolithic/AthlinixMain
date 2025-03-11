@@ -57,7 +57,7 @@ class UserViewController: UIViewController, UITableViewDelegate, UITableViewData
     //MARK: supabase declarations
     var user11: Usertable?
     var teams11:[TeamTable] = []
-    var posts11: [PostsTable] = []
+    var posts11: [PostsTableExplore] = []
     
     //MARK: Editing
     var options: [String] = []
@@ -460,7 +460,7 @@ class UserViewController: UIViewController, UITableViewDelegate, UITableViewData
                 .execute()
             
             let postsDecoder = JSONDecoder()
-            posts11 = try postsDecoder.decode([PostsTable].self, from: postsResponse.data)
+            posts11 = try postsDecoder.decode([PostsTableExplore].self, from: postsResponse.data)
             
             // Reload the table view with fetched data
             DispatchQueue.main.async {
@@ -477,7 +477,7 @@ class UserViewController: UIViewController, UITableViewDelegate, UITableViewData
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return posts11.count
     }
-    
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "ProfilePostCell", for: indexPath) as? ProfilePostCell else {
             return UITableViewCell()
@@ -487,6 +487,28 @@ class UserViewController: UIViewController, UITableViewDelegate, UITableViewData
         
         // Configure cell asynchronously
         Task {
+            // Format and display creation time
+            let createdAtString = post.createdAt
+            
+            // Convert string to Date
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ" // Adjust format to match your actual date format
+            
+            if let createdDate = dateFormatter.date(from: createdAtString) {
+                // Format the date as relative time
+                let relativeFormatter = RelativeDateTimeFormatter()
+                relativeFormatter.unitsStyle = .full
+                let relativeTime = relativeFormatter.localizedString(for: createdDate, relativeTo: Date())
+                
+                DispatchQueue.main.async {
+                    cell.createdAt.text = relativeTime // "2 hours ago", "Yesterday", etc.
+                }
+            } else {
+                DispatchQueue.main.async {
+                    cell.createdAt.text = createdAtString // Fallback to original string if parsing fails
+                }
+            }
+            
             do {
                 // Fetch user data
                 let userResponse = try await supabase.from("User").select("*").eq("userID", value: post.createdBy).single().execute()

@@ -11,6 +11,7 @@ class PostCell: UITableViewCell {
     
     
     @IBOutlet weak var athleteNameLabel: UILabel!      // Displays the athlete's name
+    @IBOutlet weak var createdAt: UILabel!
     @IBOutlet weak var profileImageView: UIImageView!  // Displays the athlete's profile picture
     @IBOutlet weak var teamNameLabel: UILabel!         // Displays the team name
     @IBOutlet weak var teamLogoImageView: UIImageView! // Displays the

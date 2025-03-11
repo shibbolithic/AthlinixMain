@@ -110,6 +110,19 @@ struct PostsTable:Codable, Equatable{
     var linkedGameID: UUID? // Nullable
     var likes: Int
 }
+
+struct PostsTableExplore:Codable, Equatable{
+    let postID: UUID
+    let createdBy: UUID // User ID
+    var content: String?
+    var image1: String
+    var image2: String
+    var image3: String
+    var createdAt: String
+    var linkedGameID: UUID? // Nullable
+    var likes: Int
+}
+
 // MARK:   DON'T USE
 struct tempCoach: Codable, Equatable{
     var teamCoachID:UUID
