@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		34648F912D8057F600BB50E1 /* DGCharts in Frameworks */ = {isa = PBXBuildFile; productRef = 34648F902D8057F600BB50E1 /* DGCharts */; };
 		347D66642D15EF71009A6EBD /* Auth in Frameworks */ = {isa = PBXBuildFile; productRef = 347D66632D15EF71009A6EBD /* Auth */; };
 		347D66662D15EF71009A6EBD /* Functions in Frameworks */ = {isa = PBXBuildFile; productRef = 347D66652D15EF71009A6EBD /* Functions */; };
 		347D66682D15EF71009A6EBD /* PostgREST in Frameworks */ = {isa = PBXBuildFile; productRef = 347D66672D15EF71009A6EBD /* PostgREST */; };
@@ -54,6 +55,7 @@
 				347D66642D15EF71009A6EBD /* Auth in Frameworks */,
 				347D666C2D15EF71009A6EBD /* Storage in Frameworks */,
 				348C3FD12D507EBD00425FAB /* SDWebImageMapKit in Frameworks */,
+				34648F912D8057F600BB50E1 /* DGCharts in Frameworks */,
 				347D666A2D15EF71009A6EBD /* Realtime in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -105,6 +107,7 @@
 				347D666D2D15EF71009A6EBD /* Supabase */,
 				348C3FCE2D507EBD00425FAB /* SDWebImage */,
 				348C3FD02D507EBD00425FAB /* SDWebImageMapKit */,
+				34648F902D8057F600BB50E1 /* DGCharts */,
 			);
 			productName = PakhisAthlinix;
 			productReference = 34598B762D0CACE60011C7A6 /* PakhisAthlinix.app */;
@@ -137,6 +140,7 @@
 			packageReferences = (
 				347D66622D15EF71009A6EBD /* XCRemoteSwiftPackageReference "supabase-swift" */,
 				348C3FCD2D507EBD00425FAB /* XCRemoteSwiftPackageReference "SDWebImage" */,
+				34648F8F2D8057F600BB50E1 /* XCRemoteSwiftPackageReference "Charts" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 34598B772D0CACE60011C7A6 /* Products */;
@@ -368,6 +372,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		34648F8F2D8057F600BB50E1 /* XCRemoteSwiftPackageReference "Charts" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/danielgindi/Charts.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.1.0;
+			};
+		};
 		347D66622D15EF71009A6EBD /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/supabase/supabase-swift.git";
@@ -387,6 +399,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		34648F902D8057F600BB50E1 /* DGCharts */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 34648F8F2D8057F600BB50E1 /* XCRemoteSwiftPackageReference "Charts" */;
+			productName = DGCharts;
+		};
 		347D66632D15EF71009A6EBD /* Auth */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 347D66622D15EF71009A6EBD /* XCRemoteSwiftPackageReference "supabase-swift" */;

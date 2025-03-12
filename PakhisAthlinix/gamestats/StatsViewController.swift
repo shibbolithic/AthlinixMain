@@ -24,13 +24,6 @@ class StatsViewController: UIViewController, UITableViewDataSource, UITableViewD
     
     @IBOutlet weak var playerLabel: UILabel!
     
-//
-//            var selectedGame: Game!
-//            var selectedTeam: Teams!
-//            var stats: [(category: String, team1Value: Int, team2Value: Int)] = []
-//
-//            var game101: GameTable?
-    
        var selectedGame: GameTable?
     
     

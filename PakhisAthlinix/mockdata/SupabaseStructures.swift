@@ -91,7 +91,6 @@ struct GameLogtable: Codable, Equatable {
 
 struct GameTable: Codable, Equatable{
     let gameID: UUID
-    
     var team1ID: UUID
     var team2ID: UUID
     var dateOfGame: String

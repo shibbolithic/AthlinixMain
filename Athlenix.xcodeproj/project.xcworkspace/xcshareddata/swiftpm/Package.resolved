@@ -1,6 +1,15 @@
 {
-  "originHash" : "f0819ae806f560cbe05c5121de3069ddd379ef0e712d6b0c7536a3388ff805e3",
+  "originHash" : "9328e57458a3550cba0b578654149e3d7ef00211b2da311c590fa0fe73b7b5e0",
   "pins" : [
+    {
+      "identity" : "charts",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/danielgindi/Charts.git",
+      "state" : {
+        "revision" : "dd9c72e3d7e751e769971092a6bd72d39198ae63",
+        "version" : "5.1.0"
+      }
+    },
     {
       "identity" : "sdwebimage",
       "kind" : "remoteSourceControl",
