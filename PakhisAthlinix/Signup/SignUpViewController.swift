@@ -9,7 +9,7 @@ import UIKit
 import Auth
 
 class SignUpViewController: UIViewController {
-
+    
     @IBOutlet weak var googleButtonOutlet: UIButton!
     @IBOutlet weak var appleButtonOutlet: UIButton!
     @IBOutlet weak var nameTFOutlet: UITextField!
@@ -28,80 +28,89 @@ class SignUpViewController: UIViewController {
     @IBAction func handleLoginWithApple(_ sender: Any) {
     }
     
+    @IBOutlet weak var roleSegmentedControl: UISegmentedControl!
+    
     
     //actions
     @IBAction func handleHidePassword(_ sender: Any) {
     }
+    
     @IBAction func handleRegister(_ sender: Any) {
-            guard let name = nameTFOutlet.text,
-                  let email = emailTFOutlet.text,
-                  let password = passwordTFOutlet.text else {
-                showAlert(title: "Signup Error", message: "Please fill all fields")
-                return
-            }
-            
-            showLoadingIndicator()
-            
-            Task {
-                do {
-                    let signUpResult = try await signUp(email: email, password: password, fullName: name)
-                    
-                    print("Signup Success id: \(signUpResult.id)")
-                    
-                    // Getting current timestamp in ISO 8601 format
-                    let currentDate = ISO8601DateFormatter().string(from: Date())
-                    
-                    // Creating user data to store in Supabase
-                    let userData = Usertable(
-                        userID: signUpResult.id,
-                        createdAt: currentDate,
-                        username: email.components(separatedBy: "@").first ?? "unknown",
-                        name: name,
-                        email: email,
-                        password: password,  // Consider hashing passwords before storing
-                        profilePicture: "person.circle",
-                        coverPicture: nil,
-                        bio: nil,
-                        dateJoined: currentDate,
-                        lastLogin: currentDate,
-                        role: .athlete  // Change to .coach if required
+        guard let name = nameTFOutlet.text,
+              let email = emailTFOutlet.text,
+              let password = passwordTFOutlet.text else {
+            showAlert(title: "Signup Error", message: "Please fill all fields")
+            return
+        }
+        
+        let selectedRole: Role = (roleSegmentedControl.selectedSegmentIndex == 0) ? .athlete : .coach
+        
+        showLoadingIndicator()
+        
+        Task {
+            do {
+                let signUpResult = try await signUp(email: email, password: password, fullName: name)
+                print("Signup Success id: \(signUpResult.id)")
+                
+                let currentDate = ISO8601DateFormatter().string(from: Date())
+                
+                let userData = Usertable(
+                    userID: signUpResult.id,
+                    createdAt: currentDate,
+                    username: email.components(separatedBy: "@").first ?? "unknown",
+                    name: name,
+                    email: email,
+                    password: password,
+                    profilePicture: "person.circle",
+                    coverPicture: nil,
+                    bio: nil,
+                    dateJoined: currentDate,
+                    lastLogin: currentDate,
+                    role: selectedRole
+                )
+                
+                let response = try await supabase
+                    .from("User")
+                    .insert(userData)
+                    .execute()
+                
+                print("Insert status: \(response.status)")
+                
+                if selectedRole == .athlete {
+                    let athleteData = AthleteProfileTable(
+                        athleteID: signUpResult.id,
+                        height: 0,
+                        weight: 0,
+                        experience: 0,
+                        position: .center,
+                        averagePointsPerGame: 0,
+                        averageReboundsPerGame: 0,
+                        averageAssistsPerGame: 0
                     )
-                    
-                    // Inserting data into the Supabase User table
-                    let response = try await supabase
-                        .from("User")
-                        .insert(userData)
-                        .execute()
-                    
-                    let athleteData = AthleteProfileTable(athleteID: signUpResult.id, height: 0, weight: 0, experience: 0, position: .center, averagePointsPerGame: 0, averageReboundsPerGame: 0, averageAssistsPerGame: 0)
                     
                     let response1 = try await supabase
                         .from("AthleteProfile")
                         .insert(athleteData)
                         .execute()
-                    print("Insert status: \(response1.status)")
-
                     
-                    print("Insert status: \(response.status)")
-                    
-                    await MainActor.run {
-                        hideLoadingIndicator()
-                        transitionToHomeScreen()
-                        showAlert(title: "Signup Success", message: "You have successfully Registered to Athlinix")
-                        //performSegue(withIdentifier: "NavigateToLogin", sender: nil)
-                        
-                    }
-                    
-                    
-                } catch {
-                    await MainActor.run {
-                        hideLoadingIndicator()
-                        showAlert(title: "Exception", message: error.localizedDescription)
-                    }
+                    print("Athlete Profile Insert status: \(response1.status)")
+                }
+                
+                await MainActor.run {
+                    hideLoadingIndicator()
+                    transitionToHomeScreen()
+                    showAlert(title: "Signup Success", message: "You have successfully registered to Athlinix")
+                }
+                
+            } catch {
+                await MainActor.run {
+                    hideLoadingIndicator()
+                    showAlert(title: "Exception", message: error.localizedDescription)
                 }
             }
         }
-        
+    }
+    
     private func transitionToHomeScreen() {
         guard let tabBarController = storyboard?.instantiateViewController(withIdentifier: "MainTabBarController") else {
             fatalError("MainTabBarController not found in storyboard")
@@ -110,7 +119,7 @@ class SignUpViewController: UIViewController {
         present(tabBarController, animated: true, completion: nil)
     }
     
-
+    
     @IBAction func handleRegisterWithGoogle(_ sender: Any) {
     }
     @IBAction func handleRegisterWithApple(_ sender: Any) {
@@ -138,8 +147,7 @@ class SignUpViewController: UIViewController {
         return auth.user
     }
     
-    
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationController?.navigationBar.isHidden = true
@@ -161,21 +169,5 @@ class SignUpViewController: UIViewController {
     }
     
     override func viewDidDisappear(_ animated: Bool) {
-        
-        
-        
-        
     }
-    
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }
